@@ -20,5 +20,6 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         debug: true
         script: bash -s < /cuddle-dev/.setting/deploy.sh
