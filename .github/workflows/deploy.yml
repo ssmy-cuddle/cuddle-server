@@ -17,12 +17,12 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      
+
     - name: Add known hosts
       run: echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
 
+    - name: Verify SSH agent
+      run: ssh-add -L
+
     - name: Deploy to server
       run: ssh jspark6815@34.47.107.76 'bash -s' < /cuddle-dev/.setting/deploy.sh
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
