@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: cuddle
+      POSTGRES_PASSWORD: cuddle12#
+      POSTGRES_DB: cuddle-db
+      TZ: Asia/Seoul
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: jspark6815@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+      TZ: Asia/Seoul
+    ports:
+      - "8080:80"
+    depends_on:
+      - postgres
+
+  fastapi:
+    build: ./app
+    volumes:
+      - ./app:/app
+    ports:
+      - "8000:80"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://cuddle:cuddle12#@postgre:5432/cuddle-db
+      TZ: Asia/Seoul
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80"]
+
+volumes:
+  data:
