@@ -26,11 +26,11 @@ services:
       - postgres
 
   fastapi:
-    build: ./app
-    volumes:
-      - ./app:/app
+    image: fastapi
     ports:
-      - "8000:80"
+      - 8000:80
+    volumes:
+      - ./app:/src/app
     depends_on:
       - postgres
     environment:
