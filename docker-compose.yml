@@ -36,7 +36,7 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://cuddle:cuddle12%23@postgres:5432/cuddle-db
+      DATABASE_URL: postgres://cuddle:cuddle12#@postgres:5432/cuddle-db
       TZ: Asia/Seoul
 
 volumes:
