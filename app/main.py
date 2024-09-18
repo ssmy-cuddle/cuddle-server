@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from . import models, schemas, crud, database
 import requests
 from jose import JWTError, jwt
+from typing import List
 #test
 
 # FastAPI 인스턴스를 생성
