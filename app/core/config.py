@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+print("BASE_DIR", BASE_DIR)
 
 class Config:
     """
@@ -66,4 +67,6 @@ def get_config(env):
 
 # 실행 환경 체크 후 config setting
 env = os.getenv("ENV", "LOCAL")
+
+print("env", env)
 settings = get_config(env)
