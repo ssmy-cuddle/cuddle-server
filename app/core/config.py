@@ -48,6 +48,8 @@ class ProdConfig(Config):
         self.DATABASE_ECHO: bool = False
         self.LOG_LEVEL: str = "WARNING"
 
+        
+
 
 def get_config(env):
     if env == "LOCAL":

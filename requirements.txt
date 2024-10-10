@@ -26,3 +26,4 @@ urllib3==2.2.2
 uvicorn==0.30.6
 python-multipart==0.0.9
 email_validator==2.2.0
+passlib==1.7.4
