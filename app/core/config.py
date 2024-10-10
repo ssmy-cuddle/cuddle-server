@@ -50,13 +50,14 @@ class ProdConfig(Config):
 
 def get_config(env):
     if env == "LOCAL":
-        load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
+        load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env.local'))
         return LocalConfig()
 
     elif env == "DEV":
         return DevConfig()
 
     elif env == "PROD":
+        load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'))
         return ProdConfig()
 
     else:
