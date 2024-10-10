@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
@@ -5,7 +6,7 @@ from db.session import engine
 from models import Base
 from routes import user_routes
 
-if __name__ == "__main__":
+def create_app():
     Base.metadata.create_all(bind=engine)
 
     app = FastAPI()
@@ -27,3 +28,10 @@ if __name__ == "__main__":
     @app.get("/")
     def read_root():
         return {"message": "API is up and running!"}
+    
+    return app
+
+app = create_app()
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

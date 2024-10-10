@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from schemas.user_schema import UserCreate, OAuthUser
-from models import User
+from models.user import User
 from db.session import get_db
 from utils.hashing import Hasher
 from utils.jwt import decode_token
