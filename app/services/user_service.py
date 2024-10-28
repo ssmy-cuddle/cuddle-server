@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.user import User
-from schemas.user_schema import UserCreate
+from schemas.user_schema import UserCreate, UserProfileUpdate
 from utils.hashing import Hash
 
 def create_user(db: Session, user: UserCreate):
@@ -23,4 +23,13 @@ def authenticate_user(db: Session, email: str, password: str):
         return None
     if not Hash.verify_password(password, user.password):
         return None
+    return user
+
+def update_user_profile_by_uid(db: Session, user: User, profile_update: UserProfileUpdate):
+    if profile_update.profile_intro is not None:
+        user.profile_intro = profile_update.profile_intro
+    if profile_update.profile_image is not None:
+        user.profile_image = profile_update.profile_image
+    db.commit()
+    db.refresh(user)
     return user

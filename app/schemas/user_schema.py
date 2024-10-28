@@ -14,6 +14,15 @@ class UserResponse(UserBase):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     status: Optional[int]
+    profile_intro: Optional[str] = None
+    profile_image: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+class UserProfileUpdate(BaseModel):
+    profile_intro: Optional[str] = None
+    profile_image: Optional[str] = None
 
     class Config:
         from_attributes = True
