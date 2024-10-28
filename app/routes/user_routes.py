@@ -1,47 +1,57 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
-
 from db.session import get_db
-from schemas.user_schema import UserCreate, UserResponse, OAuthUser
-from services.user_service import create_user, get_user_by_email, authenticate_oauth_user
+from schemas.user_schema import UserCreate, UserResponse
+from services.user_service import create_user, get_user_by_uid
+from utils.hashing import Hash
+from utils.jwt import create_access_token, create_refresh_token, verify_refresh_token
+from core.config import settings
+from fastapi.security import OAuth2PasswordRequestForm
+from datetime import timedelta
 
 router = APIRouter()
 
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def signup(user_create: UserCreate, db: Session = Depends(get_db)):
-    existing_user = get_user_by_email(db, email=user_create.email)
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email is already registered."
-        )
-    user = create_user(db, user_create)
-    return user
+@router.post("/signup", response_model=UserResponse)
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    return create_user(db=db, user=user)
 
-@router.post("/oauth/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-def oauth_signup(oauth_user: OAuthUser, db: Session = Depends(get_db)):
-    # Authenticate the user using the provided OAuth token
-    user_data = authenticate_oauth_user(oauth_user)
-    if not user_data:
+@router.post("/login", response_model=dict)
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = get_user_by_uid(db, form_data.username)
+    if not user or not Hash.verify_password(form_data.password, user.password):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid OAuth credentials."
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
-    # Check if the user is already registered
-    existing_user = get_user_by_email(db, email=user_data.email)
-    if existing_user:
-        return existing_user
-    # Create a new user based on OAuth data
-    user = create_user(db, UserCreate(username=user_data.username, email=user_data.email, password="oauth_placeholder"))
-    return user
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.uid}, expires_delta=access_token_expires
+    )
+    refresh_token_expires = timedelta(days=7)
+    refresh_token = create_refresh_token(
+        data={"sub": user.uid}, expires_delta=refresh_token_expires
+    )
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
-@router.get("/users/{user_id}", response_model=UserResponse)
-def get_user(user_id: int, db: Session = Depends(get_db)):
-    user = get_user_by_email(db, user_id=user_id)
+@router.post("/refresh-token", response_model=dict)
+def refresh_access_token(refresh_token: str, db: Session = Depends(get_db)):
+    try:
+        uid = verify_refresh_token(refresh_token)
+    except HTTPException:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    user = get_user_by_uid(db, uid)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            detail="User not found",
         )
-    return user
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.uid}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}

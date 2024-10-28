@@ -1,42 +1,26 @@
 from sqlalchemy.orm import Session
-from typing import Optional
-
-from schemas.user_schema import UserCreate, OAuthUser
 from models.user import User
-from db.session import get_db
-from utils.hashing import Hasher
-from utils.jwt import decode_token
+from schemas.user_schema import UserCreate
+from utils.hashing import Hash
 
-# Create a new user
-def create_user(db: Session, user_create: UserCreate) -> User:
-    hashed_password = Hasher.get_password_hash(user_create.password)
-    db_user = User(
-        username=user_create.username,
-        email=user_create.email,
-        hashed_password=hashed_password,
-        full_name=user_create.full_name,
-        is_active=True
-    )
+def create_user(db: Session, user: UserCreate):
+    hashed_password = Hash.get_password_hash(user.password)
+    db_user = User(uid=user.uid, user_name=user.user_name, email=user.email, password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-# Get user by email
-def get_user_by_email(db: Session, email: str) -> Optional[User]:
+def get_user_by_uid(db: Session, uid: str):
+    return db.query(User).filter(User.uid == uid).first()
+
+def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
-# Authenticate OAuth user
-def authenticate_oauth_user(oauth_user: OAuthUser) -> Optional[UserCreate]:
-    user_data = decode_token(oauth_user.provider.access_token)
-    if not user_data:
+def authenticate_user(db: Session, email: str, password: str):
+    user = get_user_by_email(db, email)
+    if not user:
         return None
-    return UserCreate(
-        username=user_data.get("username"),
-        email=user_data.get("email"),
-        password="oauth_placeholder"  # OAuth users won't have a regular password
-    )
-
-# Verify password
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return Hasher.verify_password(plain_password, hashed_password)
+    if not Hash.verify_password(password, user.password):
+        return None
+    return user
