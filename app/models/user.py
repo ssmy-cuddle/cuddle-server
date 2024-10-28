@@ -1,9 +1,7 @@
 from sqlalchemy import Column, String, Integer, TIMESTAMP
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from datetime import datetime
-
-Base = declarative_base()
+from . import Base
 
 class User(Base):
     __tablename__ = "users"
@@ -20,4 +18,4 @@ class User(Base):
     profile_intro = Column(String(255), nullable=True)  # 한 줄 소개
     profile_image = Column(String(255), nullable=True)  # 프로필 이미지 경로
 
-    pets = relationship("Pet", back_populates="owner")  # 반려동물과의 관계 설정
+    pets = relationship("Pet", back_populates="users")  # 반려동물과의 관계 설정
