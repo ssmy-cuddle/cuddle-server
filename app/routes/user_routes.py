@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
+from typing import List 
 from schemas.user_schema import UserCreate, UserResponse, UserProfileUpdate
-from services.user_service import create_user, get_user_by_uid, get_user_by_email, update_user_profile_by_uid
+from schemas.pet_schema import PetResponse
+from services.user_service import create_user, get_user_by_uid, get_user_by_email, update_user_profile_by_uid, get_pets_by_user_id
 from utils.hashing import Hash
 from utils.jwt import create_access_token, create_refresh_token, verify_refresh_token
 from core.config import settings
@@ -63,7 +65,7 @@ def refresh_access_token(refresh_token: str, db: Session = Depends(get_db)):
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/profile/{uid}", response_model=UserResponse)
+@router.get("/{uid}", response_model=UserResponse)
 def get_user_profile(uid: str, db: Session = Depends(get_db)):
     user = get_user_by_uid(db, uid)
     if not user:
@@ -72,6 +74,16 @@ def get_user_profile(uid: str, db: Session = Depends(get_db)):
             detail="User not found"
         )
     return user
+
+@router.get("/{uid}/pets", response_model=List[PetResponse])
+def get_pets_by_user_id_endpoint(uid: str, db: Session = Depends(get_db)):
+    pets = get_pets_by_user_id(db, uid)
+    if not pets:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No pets found for this user"
+        )
+    return pets
 
 @router.patch("/profile/{uid}", response_model=UserResponse)
 def update_user_profile(uid: str, profile_update: UserProfileUpdate, db: Session = Depends(get_db)):

@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.user import User
+from models.pets import Pet
 from schemas.user_schema import UserCreate, UserProfileUpdate
 from utils.hashing import Hash
 
@@ -33,3 +34,6 @@ def update_user_profile_by_uid(db: Session, user: User, profile_update: UserProf
     db.commit()
     db.refresh(user)
     return user
+
+def get_pets_by_user_id(db: Session, uid: str):
+    return db.query(Pet).filter(Pet.uid == uid).all()

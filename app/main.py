@@ -4,7 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from db.session import engine
 from models import Base
-from routes import user_routes
+from routes import user_routes, pet_routes
 
 def create_app():
     Base.metadata.create_all(bind=engine)
@@ -24,6 +24,7 @@ def create_app():
     )
 
     app.include_router(user_routes.router, prefix="/users", tags=["Users"])
+    app.include_router(pet_routes.router, prefix="/pets", tags=["Pets"])
 
     @app.get("/")
     def read_root():
