@@ -12,8 +12,9 @@ class Config:
     def __init__(self):
         # DB 환경변수
         self.DATABASE_URL: str = os.getenv("DATABASE_URL")
-        self.SECRET_CODE: str = os.getenv("SECRET_CODE")
-
+        self.SECRET_KEY: str = os.getenv("SECRET_KEY")
+        self.ALGORITHM: str = 'HS256'
+        self.ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 
 class LocalConfig(Config):
@@ -47,8 +48,6 @@ class ProdConfig(Config):
         self.PROJECT_RELOAD: bool = False
         self.DATABASE_ECHO: bool = False
         self.LOG_LEVEL: str = "WARNING"
-
-        
 
 
 def get_config(env):
