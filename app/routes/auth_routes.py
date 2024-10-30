@@ -4,7 +4,7 @@ from db.session import get_db
 from typing import List 
 from schemas.user_schema import UserCreate, UserResponse
 from services.auth_service import create_user
-from services.user_service import get_user_by_uid, get_user_by_email
+from services.user_service import get_user_by_uid, get_user_by_email, get_user_exists_by_uid
 from utils.hashing import Hash
 from utils.jwt import create_access_token, create_refresh_token, verify_refresh_token
 from core.config import settings
@@ -65,3 +65,32 @@ def refresh_access_token(refresh_token: str, db: Session = Depends(get_db)):
         data={"sub": user.uid}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+@router.post("/check-id", response_model=None)
+def check_id_exists(uid: str, db: Session = Depends(get_db)):
+    user_exists = get_user_exists_by_uid(db, uid)
+
+    if len(uid) > 50:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "error_code": "INVALID_LENGTH",
+                "msg": "ID의 길이가 50자를 초과했습니다."
+            }
+        )
+
+    if user_exists:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail={
+                "status_code": status.HTTP_409_CONFLICT,
+                "error_code": "ALREADY_EXISTS",
+                "msg": "존재하는 계정입니다."
+            }
+        )
+
+    return {
+        "uid": uid,
+        "exists": False,
+    }
