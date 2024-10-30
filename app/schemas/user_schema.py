@@ -26,3 +26,7 @@ class UserProfileUpdate(BaseModel):
 
     class Config:
         from_attributes = True
+
+class UserIdExistsResponse(BaseModel):
+    uid: str
+    exists: bool
