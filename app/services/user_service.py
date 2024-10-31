@@ -3,10 +3,13 @@ from models.user import User
 from models.pets import Pet
 from schemas.user_schema import UserCreate, UserProfileUpdate
 from utils.hashing import Hash
+from utils.nickname import getNickname
 
-def create_user(db: Session, user: UserCreate):
+async def create_user(db: Session, user: UserCreate):
     hashed_password = Hash.get_password_hash(user.password)
-    db_user = User(uid=user.uid, user_name=user.user_name, email=user.email, password=hashed_password)
+    nickname = await getNickname()
+    
+    db_user = User(uid=user.uid, user_name=nickname, email=user.email, password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

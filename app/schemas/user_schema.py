@@ -4,13 +4,13 @@ from datetime import datetime
 
 class UserBase(BaseModel):
     uid: str
-    user_name: str
     email: EmailStr
 
 class UserCreate(UserBase):
     password: str
 
 class UserResponse(UserBase):
+    user_name: str
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
     status: Optional[int]

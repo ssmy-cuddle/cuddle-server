@@ -15,14 +15,14 @@ from utils.error_code import ErrorCode, raise_error
 router = APIRouter()
 
 @router.post("/signup", response_model=UserResponse)
-def register_user(user: UserCreate, db: Session = Depends(get_db)):
+async def register_user(user: UserCreate, db: Session = Depends(get_db)):
     existing_user_uid = get_user_by_uid(db, user.uid)
     existing_user_email = get_user_by_email(db, user.email)
 
     if existing_user_uid or existing_user_email:
         raise_error(ErrorCode.ALREADY_EXISTS)
     
-    return create_user(db=db, user=user)
+    return await create_user(db=db, user=user)
 
 @router.post("/login", response_model=TokenResponse)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
