@@ -35,7 +35,8 @@ def raise_error(error_code: ErrorCode):
     raise HTTPException(
         status_code=error_code.status_code,
         detail={
-            "code": error_code.error_code,
-            "message": error_code.msg
+            "status_code": error_code.status_code,
+            "error_code": error_code.error_code,
+            "msg": error_code.msg
         }
     )
