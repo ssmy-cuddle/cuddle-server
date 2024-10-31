@@ -7,7 +7,7 @@ class PostBase(BaseModel):
     title: str
     content: str
     visibility: Optional[str] = 'public'
-    is_deleted: Optional[bool] = False
+    is_deleted: Optional[int] = 0
     post_likes: Optional[int] = 0
     post_shares: Optional[int] = 0
 
@@ -22,7 +22,7 @@ class PostUpdate(PostBase):
     title: Optional[str] = None  # 선택: 게시글 제목
     content: Optional[str] = None  # 선택: 게시글 본문
     visibility: Optional[str] = None  # 선택: 공개 범위
-    is_deleted: Optional[bool] = None  # 선택: 삭제 여부
+    is_deleted: Optional[int] = None  # 선택: 삭제 여부
     post_likes: Optional[int] = None  # 선택: 좋아요 수
     post_shares: Optional[int] = None  # 선택: 공유 수
 

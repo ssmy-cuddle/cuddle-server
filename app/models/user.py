@@ -20,3 +20,4 @@ class User(Base):
 
     pets = relationship("Pet", back_populates="users")  # 반려동물과의 관계 설정
     tokens = relationship("Token", back_populates="users")
+    posts = relationship("Posts", back_populates="users")

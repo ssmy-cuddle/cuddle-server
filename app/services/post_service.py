@@ -1,10 +1,14 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
 from schemas.post_schema import PostCreate, PostUpdate
+from datetime import datetime
 
 # 게시물 생성 함수
 def create_post(db: Session, post: PostCreate):
+    post_index = get_post_index(db)
+
     db_post = Posts(
+        post_id=post_index,
         uid=post.uid,
         title=post.title,
         content=post.content,
@@ -17,6 +21,21 @@ def create_post(db: Session, post: PostCreate):
     db.commit()  # 데이터베이스에 변경 사항 커밋
     db.refresh(db_post)  # 저장된 후 객체를 최신 상태로 갱신
     return db_post
+
+def get_post_index(db: Session) -> str:
+    str_date = datetime.today().strftime('%Y%m%d%H%M%S')
+    seq = 0
+
+    while True:
+        seq += 1
+        str_seq = str(seq).zfill(4)
+        str_index = str_date + str_seq
+
+        exists = True if db.query(Posts).filter(Posts.post_id == str_index).one_or_none() else False
+
+        if not exists:
+            return str_index
+
 
 # 특정 게시물 조회 함수
 def get_post_by_id(db: Session, post_id: str):
