@@ -12,7 +12,7 @@ class User(Base):
     password = Column(String(64), nullable=False)  # SHA256 해시된 비밀번호
     created_at = Column(TIMESTAMP, default=datetime.utcnow)  # 생성 시간
     updated_at = Column(TIMESTAMP, default=datetime.utcnow, onupdate=datetime.utcnow)  # 업데이트 시간
-    status = Column(Integer, nullable=False, default=1)  # 사용자 상태 (1: 활성, 0: 비활성)
+    status = Column(Integer, nullable=False, default=1)  # 사용자 상태 (2: 차단, 1: 활성, 0: 비활성)
 
     # 2024.10.29.
     profile_intro = Column(String(255), nullable=True)  # 한 줄 소개
