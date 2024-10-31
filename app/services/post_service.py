@@ -2,6 +2,9 @@ from sqlalchemy.orm import Session
 from models.posts import Posts
 from schemas.post_schema import PostCreate, PostUpdate
 from datetime import datetime
+from pytz import timezone
+
+
 
 # 게시물 생성 함수
 def create_post(db: Session, post: PostCreate):
@@ -23,7 +26,7 @@ def create_post(db: Session, post: PostCreate):
     return db_post
 
 def get_post_index(db: Session) -> str:
-    str_date = datetime.today().strftime('%Y%m%d%H%M%S')
+    str_date = datetime.today(timezone('Asia/Seoul')).strftime('%Y%m%d%H%M%S')
     seq = 0
 
     while True:
