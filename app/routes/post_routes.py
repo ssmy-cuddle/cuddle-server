@@ -8,8 +8,8 @@ from typing import List
 router = APIRouter()
 
 @router.post("/", response_model=PostResponse)
-def create_post_endpoint(pet: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db=db, pet=pet)
+def create_post_endpoint(post: PostCreate, db: Session = Depends(get_db)):
+    return create_post(db=db, post=post)
 
 @router.get("/{post_id}", response_model=PostResponse)
 def get_post_endpoint(post_id: str, db: Session = Depends(get_db)):
