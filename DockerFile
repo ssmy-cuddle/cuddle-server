@@ -19,3 +19,5 @@ WORKDIR /src/app
 
 # Uvicorn으로 애플리케이션 실행
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1

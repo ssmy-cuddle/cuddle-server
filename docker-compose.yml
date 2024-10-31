@@ -38,6 +38,11 @@ services:
     environment:
       ENV: PROD
       TZ: Asia/Seoul
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   data:

@@ -28,6 +28,10 @@ def create_app():
     app.include_router(pet_routes.router, prefix="/pets", tags=["Pets"])
     app.include_router(post_routes.router, prefix="/posts", tags=["Posts"])
 
+    @app.get("/health")
+    async def health_check():
+        return {"status": "healthy"}
+
     @app.get("/")
     def read_root():
         return {"message": "API is up and running!"}
