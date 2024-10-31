@@ -83,7 +83,10 @@ def check_id_exists(UserId: CheckUserId, db: Session = Depends(get_db)):
         raise_error(ErrorCode.INVALID_LENGTH)
 
     if user_exists:
-        raise_error(ErrorCode.ALREADY_EXISTS)
+        return {
+            "uid": UserId.uid,
+            "exists": True,
+        }
 
     return {
         "uid": UserId.uid,
