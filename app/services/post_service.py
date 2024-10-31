@@ -26,7 +26,7 @@ def create_post(db: Session, post: PostCreate):
     return db_post
 
 def get_post_index(db: Session) -> str:
-    str_date = datetime.today(timezone('Asia/Seoul')).strftime('%Y%m%d%H%M%S')
+    str_date = datetime.now(timezone('Asia/Seoul')).strftime('%Y%m%d%H%M%S')
     seq = 0
 
     while True:
