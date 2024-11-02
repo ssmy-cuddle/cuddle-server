@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
-from schemas.post_schema import PostCreate, PostUpdate, PostResponse
-from services.post_service import create_post, get_post_by_id, update_post_by_id
-from typing import List
+from schemas.post_schema import PostCreate, PostUpdate, PostResponse, PaginatedPostResponse
+from services.post_service import create_post, get_post_by_id, update_post_by_id, get_paginated_posts
+from typing import List, Optional #11.02 Optional 추가
 
 router = APIRouter()
 
@@ -32,3 +32,12 @@ def update_post_endpoint(post_id: str, post_update: PostUpdate, db: Session = De
     updated_post = update_post_by_id(db, post, post_update)
     return updated_post
 
+# 무한 스크롤 게시물 조회를 위한 페이지네이션 엔드포인트
+@router.get("/", response_model=PaginatedPostResponse)
+def get_posts_endpoint(
+    cursor: Optional[str] = None,  # 커서 값
+    limit: int = 10,  # 페이지당 게시물 수
+    db: Session = Depends(get_db)
+):
+    result = get_paginated_posts(db=db, cursor=cursor, limit=limit)
+    return result
