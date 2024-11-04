@@ -1,4 +1,4 @@
-from typing import Generic, TypeVar, List, Optional
+from typing import Generic, TypeVar, List, Optional, Callable
 from pydantic import BaseModel
 from sqlalchemy.orm import Query
 
@@ -11,10 +11,10 @@ class Page(BaseModel):
     model_name: str  # 모델의 이름을 저장하는 필드
     main_query: Query  # 주 쿼리를 저장하는 필드
     object_count_query: Query  # 객체 수를 계산하는 쿼리를 저장하는 필드
-    has_more_query_factory: callable  # 다음 페이지의 존재 여부를 확인하는 함수
+    has_more_query_factory: Callable  # 다음 페이지의 존재 여부를 확인하는 함수
 
-# 페이지네이터 클래스 정의Paginator
-class (Generic[ModelT, FilterT]):
+# 페이지네이터 클래스 정의
+class Paginator(Generic[ModelT, FilterT]):
     def __init__(self, model, query: Query):
         self.model = model  # 모델 클래스 설정
         self._query = query  # 주 쿼리 설정
@@ -41,7 +41,7 @@ class (Generic[ModelT, FilterT]):
         # 필터가 있는 경우 필터를 쿼리에 적용
         if filters:
             for filter_ in filters:
-                self.skim_through(filter_=filter_)  # 주 쿼리에 필터 적용
+                self._query = self.skim_through(filter_=filter_)  # 주 쿼리에 필터 적용
                 self._object_count_query = self.skim_through(
                     filter_=filter_, query=self._object_count_query  # 객체 수 쿼리에도 필터 적용
                 )
@@ -54,8 +54,8 @@ class (Generic[ModelT, FilterT]):
         self._query = self._query.limit(limit + 1)
 
         # 페이지 객체 생성하여 반환
-        return Page[ModelT](
-            self.model.__name__,  # 모델 이름 설정
+        return Page(
+            model_name=self.model.__name__,  # 모델 이름 설정
             main_query=self._query,  # 주 쿼리 설정
             object_count_query=self._object_count_query,  # 객체 수 쿼리 설정
             has_more_query_factory=lambda x, v: self.get_has_more_edges_query(
@@ -66,7 +66,6 @@ class (Generic[ModelT, FilterT]):
     # 커서 이후의 데이터를 가져오는 쿼리 생성 메서드
     def get_edges_after_query(self, cursor: str):
         # 커서 이후의 데이터 ID를 가져오는 쿼리 구현
-        # 예시로, id 기준으로 이후 데이터를 가져오는 쿼리를 작성합니다.
         return self._query.filter(self.model.id > cursor).subquery()
 
     # 커서 이전의 데이터를 가져오는 쿼리 생성 메서드
