@@ -33,11 +33,12 @@ def update_post_endpoint(post_id: str, post_update: PostUpdate, db: Session = De
     return updated_post
 
 # 무한 스크롤 게시물 조회를 위한 페이지네이션 엔드포인트
-@router.get("/userPosts/", response_model=PaginatedPostResponse)
+@router.get("/userPosts/{uid}", response_model=PaginatedPostResponse)
 def get_posts_endpoint(
-    cursor: Optional[str] = None,  # 커서 값
-    limit: int = 10,  # 페이지당 게시물 수
+    uid: str,
+    cursor: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    result = get_paginated_posts(db=db, cursor=cursor, limit=limit)
+    limit: int = 10,  # 페이지당 게시물 수
+    result = get_paginated_posts(db=db, uid=uid, cursor=cursor, limit=limit)
     return result

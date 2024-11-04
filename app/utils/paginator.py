@@ -29,21 +29,25 @@ class Paginator(Generic[ModelT, FilterT]):
         limit: int = 10,  # 한 번에 가져올 데이터의 수 제한, 기본값은 10
         direction: str = "after"  # 페이지네이션 방향, 기본값은 "after"
     ) -> Page:
+        
+        primary_key_column = list(self.model.__mapper__.primary_key)[0]  # 첫 번째 기본 키 컬럼 가져오기
+        
+        # 정렬 조건이 있는 경우 쿼리에 정렬 적용
+        if sorts:
+            self._query = self.sort(sorts, self._query)
+
         # 커서가 있는 경우 이후 또는 이전 데이터를 가져오기 위한 쿼리 설정
         if cursor:
             if direction == "after":
-                self._query = self._query.filter(self.model.id > cursor)
+                self._query = self._query.filter(self.model.primary_key_column > cursor)
             else:
-                self._query = self._query.filter(self.model.id < cursor)
+                self._query = self._query.filter(self.model.primary_key_column < cursor)
 
         # 필터가 있는 경우 필터를 쿼리에 적용
         if filters:
             for filter_ in filters:
                 self._query = self.skim_through(filter_=filter_)
 
-        # 정렬 조건이 있는 경우 쿼리에 정렬 적용
-        if sorts:
-            self._query = self.sort(sorts, self._query)
 
         # limit + 1을 설정하여 다음 페이지의 존재 여부를 확인할 수 있게 함
         items = self._query.limit(limit + 1).all()
