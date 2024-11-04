@@ -37,6 +37,7 @@ class PostResponse(PostBase):
 
 # 11.02
 class PaginatedPostResponse(BaseModel):
+    model_name: str  # 모델의 이름을 저장하는 필드
     items: List[PostResponse]  # 페이지네이션 결과로 포함된 게시물 리스트
     has_more: bool  # 다음 페이지 존재 여부
     next_cursor: Optional[str]  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
