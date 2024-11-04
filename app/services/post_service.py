@@ -70,39 +70,33 @@ def update_post_by_id(db: Session, post: Posts, post_update: PostUpdate):
 # 11.02 게시물 페이지네이션 조회 함수
 def get_paginated_posts(
     db: Session, 
-    cursor: Optional[str] = None, 
+    uid: str, 
+    cursor : Optional[str] = None,
     limit: int = 10, 
-    viewer_id: Optional[str] = None,
-    is_friend: bool = False
-):
+    is_friend: Optional[bool] = None
+)-> PaginatedPostResponse:
+    
     query = db.query(Posts)
 
     # 가시성 필터 설정
-    if viewer_id:
+    if uid:
         visibility_filter = or_(
-            Posts.uid == viewer_id,  # 본인의 게시물은 모두 조회 가능 private 포함
+            Posts.uid == uid,  # 본인의 게시물은 모두 조회 가능 private 포함
             Posts.visibility == 'public',  # 공개 게시물은 모두 조회 가능
             (is_friend and Posts.visibility == 'friends')  # 친구일 경우 친구에게만 공개된 게시물도 조회 가능
         )
         query = query.filter(visibility_filter)
     else:
-        # viewer_id가 없는 경우 공개 게시물만 조회 가능
         query = query.filter(Posts.visibility == 'public')
 
     # Paginator 인스턴스 생성 및 페이지네이션 수행
     paginator = Paginator(Posts, query)
     paginated_result = paginator.get_paginated_result(
         cursor=cursor,
+        direction = "desc",
         sorts=["-created_at"],  # 가장 최근에 작성된 게시물부터 조회
         limit=limit
     )
-
-    items = paginated_result.items  # Paginator에서 이미 계산된 items 사용
-    has_more = paginated_result.has_more  # Paginator에서 이미 계산된 has_more 사용
-    next_cursor = paginated_result.next_cursor
-
-    # 실제 반환할 데이터만 슬라이싱 (limit으로 제한)
-    items = items[:limit]
 
     # PostResponse로 변환
     response_items = [
@@ -118,13 +112,11 @@ def get_paginated_posts(
             created_at=item.created_at,
             last_updated=item.last_updated
         )
-        for item in items
+        for item in paginated_result.items
     ]
-    
-   
 
     return PaginatedPostResponse(
         items=response_items,  # 현재 페이지의 게시물 리스트
-        has_more=has_more,  # 다음 페이지 존재 여부
-        next_cursor=response_items[-1].post_id if has_more and response_items else None  # 다음 커서 값 설정 (있다면 마지막 아이템의 ID)
+        has_more=paginated_result.has_more,  # Paginator에서 이미 계산된 has_more 사용
+        next_cursor=paginated_result.next_cursor
     )
