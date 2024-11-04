@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
-from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse
+from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse
 from datetime import datetime
 from pytz import timezone
 
@@ -72,8 +72,8 @@ def get_paginated_posts(
     db: Session, 
     cursor: Optional[str] = None, 
     limit: int = 10, 
-    viewer_id: Optional[str] = None
-    #is_friend: bool = False
+    viewer_id: Optional[str] = None,
+    is_friend: bool = False
 ):
     query = db.query(Posts)
 
@@ -97,9 +97,9 @@ def get_paginated_posts(
         limit=limit
     )
 
-    # 다음 페이지 여부 확인 및 아이템 반환
-    items = paginated_result.main_query.all()
-    has_more = len(items) > limit  # limit + 1로 가져왔을 경우 다음 데이터가 존재함을 의미함
+    items = paginated_result.items  # Paginator에서 이미 계산된 items 사용
+    has_more = paginated_result.has_more  # Paginator에서 이미 계산된 has_more 사용
+    next_cursor = paginated_result.next_cursor
 
     # 실제 반환할 데이터만 슬라이싱 (limit으로 제한)
     items = items[:limit]
@@ -120,6 +120,8 @@ def get_paginated_posts(
         )
         for item in items
     ]
+    
+   
 
     return PaginatedPostResponse(
         items=response_items,  # 현재 페이지의 게시물 리스트
