@@ -39,6 +39,6 @@ def get_posts_endpoint(
     cursor: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    limit: int = 10,  # 페이지당 게시물 수
+    limit: int = 10  # 페이지당 게시물 수
     result = get_paginated_posts(db=db, uid=uid, cursor=cursor, limit=limit)
     return result
