@@ -1,6 +1,10 @@
 from typing import Generic, TypeVar, List, Optional
 from pydantic import BaseModel
 from sqlalchemy.orm import Query
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # 제네릭 타입 변수 정의
 ModelT = TypeVar("ModelT")  # 모델 타입을 제네릭하게 정의하기 위한 타입 변수
@@ -29,7 +33,7 @@ class Paginator(Generic[ModelT, FilterT]):
         limit: int = 10,  # 한 번에 가져올 데이터의 수 제한, 기본값은 10
         direction: str = "after"  # 페이지네이션 방향, 기본값은 "after"
     ) -> Page:
-        
+        logger.info(f"Type of limit at the beginning: {type(limit)}, value: {limit}")
         primary_key_column = list(self.model.__mapper__.primary_key)[0]  # 첫 번째 기본 키 컬럼 가져오기
         
         # 정렬 조건이 있는 경우 쿼리에 정렬 적용
@@ -50,7 +54,7 @@ class Paginator(Generic[ModelT, FilterT]):
 
 
         # limit + 1을 설정하여 다음 페이지의 존재 여부를 확인할 수 있게 함
-        items = self._query.limit(limit + 1).all()
+        items = self._query.limit(int(limit) + 1).all()
         has_more = len(items) > limit
 
         # 필요한 만큼의 데이터만 반환
