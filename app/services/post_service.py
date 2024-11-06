@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
-from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse
+from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems
 from datetime import datetime
 from pytz import timezone
 
@@ -97,23 +97,22 @@ def get_paginated_posts(
         sorts=["-created_at"],  # 가장 최근에 작성된 게시물부터 조회
         limit=limit
     )
-
+    print(paginated_result)
     # PostResponse로 변환
     response_items = [
-        PostResponse(
+        PaginatedPostResponseItems(
             post_id=item.post_id,
             uid=item.uid,
             title=item.title,
             content=item.content,
-            visibility=item.visibility,
-            is_deleted=item.is_deleted,
-            post_likes=item.post_likes,
-            post_shares=item.post_shares,
-            created_at=item.created_at,
-            last_updated=item.last_updated
+            # visibility=item.visibility,
+            # postLike_cnt=item.is_deleted,
+            # comment_cnt=item.post_likes,
+            # is_follow=item.post_shares,
         )
         for item in paginated_result.items
     ]
+
 
     return PaginatedPostResponse(
         items=response_items,  # 현재 페이지의 게시물 리스트
