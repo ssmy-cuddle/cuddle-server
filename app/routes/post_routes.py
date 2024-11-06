@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
-from schemas.post_schema import PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems
-from services.post_service import create_post, get_post_by_id, update_post_by_id, get_paginated_posts
+from schemas.post_schema import PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
+from services.post_service import create_post, get_post_by_id, update_post_by_id, get_paginated_posts, get_paginated_posts2
 from typing import List, Optional #11.02 Optional 추가
 
 router = APIRouter()
@@ -47,5 +47,20 @@ def get_posts_endpoint(
              viewer_id=viewer_id,
              cursor=cursor,
              #is_friend = null,
+             limit=limit)
+    return result
+
+# 전체 조회 페이징
+@router.get("/getAllPosts/{viewer_id}", response_model=PaginatedPostResponse2)
+def get_posts_endpoint(
+    viewer_id : str,
+    cursor: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    limit: int = 10  # 페이지당 게시물 수
+    result = get_paginated_posts2(
+             db=db, 
+             viewer_id=viewer_id,
+             cursor=cursor,
              limit=limit)
     return result

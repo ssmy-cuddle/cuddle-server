@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
-from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems
+from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from datetime import datetime
 from pytz import timezone
 
@@ -109,7 +109,6 @@ def get_paginated_posts(
             # visibility=item.visibility,
             # postLike_cnt=item.is_deleted,
             # comment_cnt=item.post_likes,
-            # is_follow=item.post_shares,
         )
         for item in paginated_result.items
     ]
@@ -119,4 +118,57 @@ def get_paginated_posts(
         items=response_items,  # 현재 페이지의 게시물 리스트
         has_more=paginated_result.has_more,  # Paginator에서 이미 계산된 has_more 사용
         next_cursor=paginated_result.next_cursor
+        #is_follow = y
+    )
+
+
+# 11.02 게시물 페이지네이션 조회 함수
+def get_paginated_posts2(
+    db: Session, 
+    viewer_id: str,
+    cursor : Optional[str] = None,
+    limit: int = 10, 
+    direction: str = "after"
+)-> PaginatedPostResponse2:
+    
+    query = db.query(Posts)
+    items = query.all()
+    
+    query = query.order_by(getattr(Posts, 'post_id').desc())
+
+    direction = "previous"
+
+    # 커서가 있는 경우 이후 또는 이전 데이터를 가져오기 위한 쿼리 설정
+    if cursor:
+        if direction == "after":
+            query = query.filter(Posts.post_id > cursor)
+        else:
+            query = query.filter(Posts.post_id < cursor)
+
+    has_more = len(items) > limit
+
+    # PostResponse로 변환
+    response_items = [
+        PaginatedPostResponseItems(
+            post_id=item.post_id,
+            uid=item.uid,
+            title=item.title,
+            content=item.content,
+            #immages: Optional[List] = None
+            #visibility: Optional[str] = 'public'
+            #postLike_cnt : Optional[int] = 0
+            #comment_cnt : Optional[int] = 0
+            can_modify='나중에 세팅해줄게용'
+        )
+        for item in items
+    ]
+
+    # 필요한 만큼의 데이터만 반환
+    response_items = items[:limit]
+    next_cursor = response_items[-1].id if has_more else None
+
+    return PaginatedPostResponse2(
+        items=response_items,  # 현재 페이지의 게시물 리스트
+        has_more=has_more,  # Paginator에서 이미 계산된 has_more 사용
+        next_cursor=next_cursor
     )

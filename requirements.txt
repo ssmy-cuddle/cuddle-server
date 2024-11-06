@@ -31,4 +31,3 @@ httpx==0.27.2
 asyncio==3.4.3
 pytz==2024.2
 datetime==5.5
-logging==0.4.9.6

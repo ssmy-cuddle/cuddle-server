@@ -12,20 +12,16 @@ class PostBase(BaseModel):
     post_likes: Optional[int] = 0
     post_shares: Optional[int] = 0
 
-class PostCreate(PostBase):
+class PostCreate(BaseModel):
     uid: str  # 필수: 작성자의 사용자 ID
     title: str  # 필수: 게시글 제목
     content: str  # 필수: 게시글 본문
     visibility: Optional[str] = 'public'  # 선택: 공개 범위
 
 
-class PostUpdate(PostBase):
+class PostUpdate(BaseModel):
     title: Optional[str] = None  # 선택: 게시글 제목
     content: Optional[str] = None  # 선택: 게시글 본문
-    visibility: Optional[str] = None  # 선택: 공개 범위
-    is_deleted: Optional[int] = None  # 선택: 삭제 여부
-    post_likes: Optional[int] = None  # 선택: 좋아요 수
-    post_shares: Optional[int] = None  # 선택: 공유 수
 
 
 class PostResponse(PostBase):
@@ -41,10 +37,11 @@ class PaginatedPostResponseItems(BaseModel):
     uid: str  # 사용자 ID
     title: str
     content: str
-    visibility: Optional[str] = 'private'
+    immages: Optional[List] = None
+    visibility: Optional[str] = 'public'
     postLike_cnt : Optional[int] = 0
     comment_cnt : Optional[int] = 0
-    is_follow : Optional[str] = 'y' # n: / y:팔로우 승인상태
+    can_modify : str
 
 
 # 11.02
@@ -53,6 +50,13 @@ class PaginatedPostResponse(BaseModel):
     items: List[PaginatedPostResponseItems]  # 페이지네이션 결과로 포함된 게시물 리스트
     has_more: bool  # 다음 페이지 존재 여부
     next_cursor: Optional[str]  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
+    class Config:
+        from_attributes = True  # ORM 객체에서 속성 매핑
 
+# 11.06 POST 전체 조회
+class PaginatedPostResponse2(BaseModel):
+    items: List[PaginatedPostResponseItems]  # 페이지네이션 결과로 포함된 게시물 리스트
+    has_more: bool  # 다음 페이지 존재 여부
+    next_cursor: Optional[str] = None  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
     class Config:
         from_attributes = True  # ORM 객체에서 속성 매핑
