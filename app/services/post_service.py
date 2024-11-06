@@ -71,6 +71,7 @@ def update_post_by_id(db: Session, post: Posts, post_update: PostUpdate):
 def get_paginated_posts(
     db: Session, 
     uid: str, 
+    viewer_id: str,
     cursor : Optional[str] = None,
     limit: int = 10, 
     is_friend: Optional[bool] = None
@@ -79,9 +80,9 @@ def get_paginated_posts(
     query = db.query(Posts)
 
     # 가시성 필터 설정
-    if uid:
+    if viewer_id:
         visibility_filter = or_(
-            Posts.uid == uid,  # 본인의 게시물은 모두 조회 가능 private 포함
+            Posts.uid == viewer_id,  # 본인의 게시물은 모두 조회 가능 private 포함
             Posts.visibility == 'public',  # 공개 게시물은 모두 조회 가능
             (is_friend and Posts.visibility == 'friends')  # 친구일 경우 친구에게만 공개된 게시물도 조회 가능
         )
