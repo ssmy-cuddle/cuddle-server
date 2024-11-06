@@ -3,6 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 
 class PostBase(BaseModel):
+    post_id: str
     uid: str  # 사용자 ID
     title: str
     content: str
@@ -35,10 +36,21 @@ class PostResponse(PostBase):
     class Config:
         from_attributes = True  # ORM 객체에서 속성 매핑
 
+class PaginatedPostResponseItems(BaseModel):
+    post_id: str
+    uid: str  # 사용자 ID
+    title: str
+    content: str
+    visibility: Optional[str] = 'private'
+    postLike_cnt : Optional[int] = 0
+    comment_cnt : Optional[int] = 0
+    is_follow : Optional[str] = 'y' # n: / y:팔로우 승인상태
+
+
 # 11.02
 class PaginatedPostResponse(BaseModel):
     model_name: str  # 모델의 이름을 저장하는 필드
-    items: List[PostResponse]  # 페이지네이션 결과로 포함된 게시물 리스트
+    items: List[PaginatedPostResponseItems]  # 페이지네이션 결과로 포함된 게시물 리스트
     has_more: bool  # 다음 페이지 존재 여부
     next_cursor: Optional[str]  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
 
