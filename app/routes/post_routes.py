@@ -36,9 +36,16 @@ def update_post_endpoint(post_id: str, post_update: PostUpdate, db: Session = De
 @router.get("/userPosts/{inqr_id}/{viewer_id}", response_model=PaginatedPostResponse)
 def get_posts_endpoint(
     inqr_id: str,
+    viewer_id : str,
     cursor: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
     limit: int = 10  # 페이지당 게시물 수
-    result = get_paginated_posts(db=db, uid=inqr_id, cursor=cursor, limit=limit)
+    result = get_paginated_posts(
+             db=db, 
+             uid=inqr_id, 
+             viewer_id=viewer_id,
+             cursor=cursor,
+             #is_friend = null,
+             limit=limit)
     return result
