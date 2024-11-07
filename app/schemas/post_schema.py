@@ -35,14 +35,17 @@ class PostResponse(PostBase):
 class PaginatedPostResponseItems(BaseModel):
     post_id: str
     uid: str  # 사용자 ID
-    title: str
-    content: str
+    title: Optional[str]
+    content: Optional[str]
     immages: Optional[List] = None
     visibility: Optional[str] = 'public'
     postLike_cnt : Optional[int] = 0
     comment_cnt : Optional[int] = 0
-    can_modify : str
+    can_modify : Optional[str] = None
+    created_at: datetime
 
+    class Config:
+        orm_mode = True
 
 # 11.02
 class PaginatedPostResponse(BaseModel):

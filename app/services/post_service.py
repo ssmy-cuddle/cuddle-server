@@ -3,6 +3,7 @@ from models.posts import Posts
 from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from datetime import datetime
 from pytz import timezone
+from pydantic import parse_obj_as
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -121,8 +122,24 @@ def get_paginated_posts(
         #is_follow = y
     )
 
+def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
+    """
+    SQLAlchemy 모델 리스트를 Pydantic 모델 리스트로 변환하는 함수.
+    
+    Args:
+    - items (List[Posts]): SQLAlchemy Posts 객체 리스트
+    - viewer_id (str): 조회하는 사용자 ID
+    
+    Returns:
+    - List[PaginatedPostResponseItems]: 변환된 Pydantic 모델 리스트
+    """
+    response_items = [
+        PaginatedPostResponseItems.from_orm(item).copy(update={"can_modify": "y" if (item.uid == viewer_id) else "n"})
+        for item in items
+    ]
+    return response_items
 
-# 11.02 게시물 페이지네이션 조회 함수
+# 11.06 게시물 페이지네이션 조회 함수
 def get_paginated_posts2(
     db: Session, 
     viewer_id: str,
@@ -132,43 +149,39 @@ def get_paginated_posts2(
 )-> PaginatedPostResponse2:
     
     query = db.query(Posts)
-    items = query.all()
-    
+    query = query.filter(Posts.post_id < cursor)
     query = query.order_by(getattr(Posts, 'post_id').desc())
 
-    direction = "previous"
+    
 
-    # 커서가 있는 경우 이후 또는 이전 데이터를 가져오기 위한 쿼리 설정
-    if cursor:
-        if direction == "after":
-            query = query.filter(Posts.post_id > cursor)
-        else:
-            query = query.filter(Posts.post_id < cursor)
-
+    items = query.limit(limit + 1).all()
     has_more = len(items) > limit
-
-    # PostResponse로 변환
-    response_items = [
-        PaginatedPostResponseItems(
-            post_id=item.post_id,
-            uid=item.uid,
-            title=item.title,
-            content=item.content,
-            #immages: Optional[List] = None
-            #visibility: Optional[str] = 'public'
-            #postLike_cnt : Optional[int] = 0
-            #comment_cnt : Optional[int] = 0
-            can_modify='나중에 세팅해줄게용'
-        )
-        for item in items
-    ]
-
-    # 필요한 만큼의 데이터만 반환
     response_items = items[:limit]
-    next_cursor = response_items[-1].id if has_more else None
+    next_cursor = response_items[-1].post_id if has_more and response_items else None
+
+    response_items_pydantic = convert_posts_to_pydantic(response_items, viewer_id)
+
+    # # PostResponse로 변환
+    # response_items = [
+    #     PaginatedPostResponseItems(
+    #         post_id=item.post_id,
+    #         uid=item.uid,
+    #         title=item.title,
+    #         content=item.content,
+    #         #immages: Optional[List] = None
+    #         #visibility: Optional[str] = 'public'
+    #         #postLike_cnt : Optional[int] = 0
+    #         #comment_cnt : Optional[int] = 0
+    #         can_modify='Y',
+    #         created_at = item.created_at
+    #     )
+    #     for item in items
+    # ]
+
+    
 
     return PaginatedPostResponse2(
-        items=response_items,  # 현재 페이지의 게시물 리스트
-        has_more=has_more,  # Paginator에서 이미 계산된 has_more 사용
+        items=response_items_pydantic , 
+        has_more=has_more,
         next_cursor=next_cursor
     )
