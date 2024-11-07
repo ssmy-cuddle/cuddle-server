@@ -21,9 +21,6 @@ def create_post(db: Session, post: PostCreate):
         title=post.title,
         content=post.content,
         visibility=post.visibility,
-        is_deleted=post.is_deleted,
-        post_likes=post.post_likes,
-        post_shares=post.post_shares
     )
     db.add(db_post)  # 게시물 추가 준비
     db.commit()  # 데이터베이스에 변경 사항 커밋
