@@ -46,6 +46,7 @@ class PaginatedPostResponseItems(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True  # ORM 객체에서 속성 매핑 가능하게 설정
 
 # 11.02
 class PaginatedPostResponse(BaseModel):

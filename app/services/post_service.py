@@ -149,11 +149,11 @@ def get_paginated_posts2(
 )-> PaginatedPostResponse2:
     
     query = db.query(Posts)
-    
-    if cursor:
+
+    if cursor is not None:
         query = query.filter(Posts.post_id < cursor)
 
-    query = query.order_by(getattr(Posts, 'post_id').desc())
+    query = query.order_by(Posts.post_id.desc())
 
     
 
