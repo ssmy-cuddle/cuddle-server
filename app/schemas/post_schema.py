@@ -44,8 +44,8 @@ class PaginatedPostResponseItems(BaseModel):
     can_modify : Optional[str] = None
     created_at: datetime
     reactions: Optional[bool] = False
-    user_name: str
-    porofile_image: str
+    user_name: Optional[str] = None
+    porofile_image: Optional[str] = None
 
     class Config:
         orm_mode = True
