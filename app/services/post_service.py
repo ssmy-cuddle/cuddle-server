@@ -128,6 +128,14 @@ def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[Pagina
         PaginatedPostResponseItems.from_orm(item).copy(update={"reactions": True })
         for item in items
     ]
+    response_items = [
+        PaginatedPostResponseItems.from_orm(item).copy(update={"user_name": "str" })
+        for item in items
+    ]
+    response_items = [
+        PaginatedPostResponseItems.from_orm(item).copy(update={"porofile_image": "image" })
+        for item in items
+    ]
     return response_items
 
 # 11.06 게시물 페이지네이션 조회 함수
