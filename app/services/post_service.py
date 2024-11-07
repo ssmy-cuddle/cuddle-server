@@ -121,19 +121,12 @@ def get_paginated_posts(
 
 def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
     response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={"can_modify": "y" if (item.uid == viewer_id) else "n"})
-        for item in items
-    ]
-    response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={"reactions": True })
-        for item in items
-    ]
-    response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={"user_name": "str" })
-        for item in items
-    ]
-    response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={"porofile_image": "image" })
+        PaginatedPostResponseItems.from_orm(item).copy(update={
+            "can_modify": "y" if (item.uid == viewer_id) else "n",
+            "reactions": True,
+            "user_name": "str",
+            "profile_image": "image"
+        })
         for item in items
     ]
     return response_items
