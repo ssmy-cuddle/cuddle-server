@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
-from models.postLikes import PostLikes
+from models.postLikes import postLikes
 from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from datetime import datetime
 from pytz import timezone
@@ -10,7 +10,6 @@ from pydantic import parse_obj_as
 from utils.paginator import Paginator  # Paginator 임포트
 from sqlalchemy import or_, and_
 from typing import List, Optional #11.02 Optional 추가
-
 
 # 게시물 생성 함수
 def create_post(db: Session, post: PostCreate):

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
 from . import Base
 
-class Posts(Base):
+class postLikes(Base):
     __tablename__ = "postLikes"
 
     id = Column(Integer, primary_key=True, autoincrement=True)  # 반려동물 ID (pk)
