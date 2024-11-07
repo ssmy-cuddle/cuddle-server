@@ -120,15 +120,19 @@ def get_paginated_posts(
     )
 
 def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
-    response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={
-            "can_modify": "y" if (item.uid == viewer_id) else "n",
-            "reactions": True,
-            "user_name": "str",
-            "profile_image": "image"
-        })
-        for item in items
-    ]
+    response_items = []
+    
+    for item in items:
+        # from_orm을 이용하여 기본 모델 생성
+        pydantic_item = PaginatedPostResponseItems.from_orm(item)
+        
+        # 수동으로 각 필드 업데이트
+        pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
+        pydantic_item.reactions = True
+        pydantic_item.user_name = "str"  # 여기서 하드코딩된 값 설정
+        pydantic_item.profile_image = "image"  # 하드코딩된 값 설정
+        
+        response_items.append(pydantic_item)
     return response_items
 
 # 11.06 게시물 페이지네이션 조회 함수
@@ -138,7 +142,7 @@ def get_paginated_posts2(
     cursor : Optional[str] = None,
     limit: int = 10, 
     direction: str = "after"
-)-> PaginatedPostResponse2:
+)-> PaginatedPostResponse2: 
     
     query = db.query(Posts)
 
