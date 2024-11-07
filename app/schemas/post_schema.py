@@ -37,12 +37,13 @@ class PaginatedPostResponseItems(BaseModel):
     uid: str  # 사용자 ID
     title: Optional[str]
     content: Optional[str]
-    immages: Optional[List] = None
+    images: Optional[List] = None
     visibility: Optional[str] = 'public'
     postLike_cnt : Optional[int] = 0
     comment_cnt : Optional[int] = 0
     can_modify : Optional[str] = None
     created_at: datetime
+    reactions: Optional[bool] = False
 
     class Config:
         orm_mode = True

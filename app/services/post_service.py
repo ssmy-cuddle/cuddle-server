@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
+from models.postLikes import PostLikes
 from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from datetime import datetime
 from pytz import timezone
@@ -120,18 +121,12 @@ def get_paginated_posts(
     )
 
 def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
-    """
-    SQLAlchemy 모델 리스트를 Pydantic 모델 리스트로 변환하는 함수.
-    
-    Args:
-    - items (List[Posts]): SQLAlchemy Posts 객체 리스트
-    - viewer_id (str): 조회하는 사용자 ID
-    
-    Returns:
-    - List[PaginatedPostResponseItems]: 변환된 Pydantic 모델 리스트
-    """
     response_items = [
         PaginatedPostResponseItems.from_orm(item).copy(update={"can_modify": "y" if (item.uid == viewer_id) else "n"})
+        for item in items
+    ]
+    response_items = [
+        PaginatedPostResponseItems.from_orm(item).copy(update={"reactions": "y" })
         for item in items
     ]
     return response_items
