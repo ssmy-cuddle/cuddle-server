@@ -125,7 +125,7 @@ def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[Pagina
         for item in items
     ]
     response_items = [
-        PaginatedPostResponseItems.from_orm(item).copy(update={"reactions": "y" })
+        PaginatedPostResponseItems.from_orm(item).copy(update={"reactions": True })
         for item in items
     ]
     return response_items
