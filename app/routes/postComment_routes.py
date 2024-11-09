@@ -9,5 +9,5 @@ router = APIRouter()
 
 @router.post("/{post_id}", response_model=PostCommentResponse)
 def create_postComment_endpoint(post_id: str, postComment: PostCommentCreate, db: Session = Depends(get_db)):
-    postComment.post_id = post_id
-    return create_postComment(db=db, postComment=postComment)
+ 
+    return create_postComment(post_id=post_id, db=db, postComment=postComment)
