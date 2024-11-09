@@ -9,11 +9,8 @@ class PostCommentBase(BaseModel): #기본
     parent_id: Optional[int] = None
     created_at: Optional[datetime] = None
 
-class PostCommentCreate(BaseModel): # 댓글 생성
-    post_id: str
-    message: str  
-    uid: str  
-    parent_id: Optional[str] = None  
+class PostCommentCreate(PostCommentBase): # 댓글 생성
+    pass
 
 class PostCommentUpdate(BaseModel):
     message: Optional[str] = None
