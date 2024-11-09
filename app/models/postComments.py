@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer
 from . import Base
 
-class postComment(Base):
+class PostComment(Base):
     __tablename__ = "postComments"
 
     comment_id = Column(Integer, primary_key=True, autoincrement=True) 
