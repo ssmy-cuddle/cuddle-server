@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.postComments import postComment
+from models.postComments import PostComment
 from schemas.postComment_schema import PostCommentCreate, PostCommentUpdate, PaginatedPostCommentResponseItems, PaginatedPostCommentResponse
 from datetime import datetime
 from pytz import timezone
@@ -10,7 +10,7 @@ from typing import List, Optional
 # 댓글생성
 def create_postComment(post_id : str, db: Session, postComment: PostCommentCreate):
 
-    db_postComment = postComment(
+    db_postComment = PostComment(
         message=postComment.message,
         uid=postComment.uid,
         post_id=post_id,
