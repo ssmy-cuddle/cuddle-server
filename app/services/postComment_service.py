@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models.postComments import postComments
+from models.postComments import postComment
 from schemas.postComment_schema import PostCommentCreate, PostCommentUpdate, PaginatedPostCommentResponseItems, PaginatedPostCommentResponse
 from datetime import datetime
 from pytz import timezone
