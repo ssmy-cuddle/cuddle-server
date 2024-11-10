@@ -13,7 +13,7 @@ def create_postComment_endpoint(post_id: str, postComment: PostCommentCreate, db
     return create_postComment(post_id=post_id, db=db, postComment=postComment)
 
 # 댓글 페이징 
-@router.get("/{post_id}", response_model=PaginatedPostCommentResponseItems)
+@router.get("/{post_id}", response_model=PaginatedPostCommentResponse)
 def get_paging_postComment_endpoint(
     post_id: str,
     viewer_id: Optional[str] = None,
