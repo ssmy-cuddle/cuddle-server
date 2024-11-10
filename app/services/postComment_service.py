@@ -21,7 +21,7 @@ def create_postComment(post_id : str, db: Session, postComment: PostCommentCreat
     db.refresh(db_postComment)  # 저장된 후 객체를 최신 상태로 갱신
     return db_postComment
 
-def convert_posts_to_pydantic(items: List[PostComment], viewer_id: str):
+def convert_posts_to_pydantic(items: List[PostComment], viewer_id: Optional[str]):
     response_items = []
     
     for item in items:
