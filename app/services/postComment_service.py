@@ -51,10 +51,10 @@ def delete_postComment_by_id(db: Session, postComment: PostComment):
     db.commit()
 
 def get_paging_postcomment(
-    post_id : Optional[str],
-    viewer_id : Optional[str],
-    comment_id : Optional[int],
-    db: Session
+    db: Session,
+    post_id : Optional[str] = None,
+    viewer_id : Optional[str] = None,
+    comment_id : Optional[int] = None
 ):
     if comment_id is None:
         query = db.query(PostComment)
