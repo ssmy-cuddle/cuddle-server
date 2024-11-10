@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
 from schemas.postComment_schema import PostCommentCreate, PostCommentUpdate, PaginatedPostCommentResponse, PostCommentResponse, PaginatedPostCommentResponseItems
-from services.postComment_service import create_postComment, get_paging_postcomment
+from services.postComment_service import create_postComment, get_paging_postcomment, get_postComment_by_id, delete_postComment_by_id
 from typing import List, Optional
 
 router = APIRouter()
@@ -22,3 +22,14 @@ def get_paging_postComment_endpoint(
     
     result = get_paging_postcomment(post_id=post_id, viewer_id=viewer_id, db=db)
     return result
+
+@router.delete("/{comment_id}", response_model=dict)
+def delete_postComment_endpoint(comment_id: int, db: Session = Depends(get_db)):
+    postComment = get_postComment_by_id(db, comment_id)
+    if not postComment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Pet not found"
+        )
+    delete_postComment_by_id(db, postComment)
+    return {"detail": "comment deleted successfully"}

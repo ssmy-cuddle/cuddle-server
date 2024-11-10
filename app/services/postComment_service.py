@@ -38,6 +38,13 @@ def convert_posts_to_pydantic(items: List[PostComment], viewer_id: Optional[str]
 
     return response_items
 
+def get_postComment_by_id(db: Session, comment_id: int):
+    return db.query(PostComment).filter(PostComment.comment_id == comment_id).first()
+
+def delete_postComment_by_id(db: Session, postComment: PostComment):
+    db.delete(postComment)
+    db.commit()
+
 def get_paging_postcomment(
     post_id : str,
     viewer_id : Optional[str],
