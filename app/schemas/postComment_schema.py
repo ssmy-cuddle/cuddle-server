@@ -28,6 +28,8 @@ class PaginatedPostCommentResponseItems(BaseModel):
     created_at: Optional[datetime] = None
 
     #그외 세팅
+    can_modify : Optional[str] = None
+    reactions: Optional[bool] = False
     user_name: Optional[str] = None
     profile_image: Optional[str] = None
 
