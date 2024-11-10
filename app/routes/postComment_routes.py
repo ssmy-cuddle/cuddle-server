@@ -8,9 +8,14 @@ from typing import List, Optional
 router = APIRouter()
 
 @router.post("/{post_id}", response_model=PostCommentResponse)
-def create_postComment_endpoint(post_id: str, postComment: PostCommentCreate, db: Session = Depends(get_db)):
+def create_postComment_endpoint(
+    post_id: str, 
+    parent_id: Optional[int],
+    postComment: PostCommentCreate, 
+    db: Session = Depends(get_db)
+):
  
-    return create_postComment(post_id=post_id, db=db, postComment=postComment)
+    return create_postComment(post_id=post_id, parent_id=parent_id, db=db, postComment=postComment)
 
 # 댓글 페이징 
 @router.get("/{post_id}", response_model=PaginatedPostCommentResponse)
