@@ -8,7 +8,12 @@ from sqlalchemy import or_, and_
 from typing import List, Optional 
 
 # 댓글생성
-def create_postComment(post_id : str,  parent_id: Optional[int], db: Session, postComment: PostCommentCreate):
+def create_postComment(
+    post_id : str,  
+    db: Session, 
+    postComment: PostCommentCreate,
+    parent_id: Optional[int] = None
+):
 
     db_postComment = PostComment(
         message=postComment.message,
