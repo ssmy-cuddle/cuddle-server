@@ -53,17 +53,34 @@ def delete_postComment_by_id(db: Session, postComment: PostComment):
 def get_paging_postcomment(
     post_id : str,
     viewer_id : Optional[str],
+    comment_id : Optional[int],
     db: Session
 ):
-    query = db.query(PostComment)
-    query = db.query(PostComment).filter(PostComment.post_id == post_id)
-    query = query.order_by(PostComment.created_at.desc())
-    items = query.all()
+    if comment_id is None:
+        query = db.query(PostComment)
+        query = db.query(PostComment).filter(PostComment.post_id == post_id)
+        query = query.order_by(PostComment.created_at.desc())
+        items = query.all()
 
-    response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
+        response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
     
-    return PaginatedPostCommentResponse(
-        items=response_items_pydantic, 
-        has_more=None,
-        next_cursor=None
-    )
+        return PaginatedPostCommentResponse(
+            items=response_items_pydantic, 
+            has_more=None,
+            next_cursor=None
+        )
+    else :
+
+        query = db.query(PostComment)
+        query = db.query(PostComment).filter(PostComment.post_id == post_id)
+        query = db.query(PostComment).filter(PostComment.parent_id == comment_id)
+        query = query.order_by(PostComment.created_at.desc())
+        items = query.all()
+
+        response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
+    
+        return PaginatedPostCommentResponse(
+            items=response_items_pydantic, 
+            has_more=None,
+            next_cursor=None
+        )

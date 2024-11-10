@@ -28,6 +28,17 @@ def get_paging_postComment_endpoint(
     result = get_paging_postcomment(post_id=post_id, viewer_id=viewer_id, db=db)
     return result
 
+# 답글 조회
+@router.get("/subComment/{comment_id}", response_model=PaginatedPostCommentResponse)
+def get_paging_postComment_endpoint(
+    comment_id: int,
+    viewer_id: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    
+    result = get_paging_postcomment(comment_id=comment_id, viewer_id=viewer_id, db=db)
+    return result
+
 @router.delete("/{comment_id}", response_model=dict)
 def delete_postComment_endpoint(comment_id: int, db: Session = Depends(get_db)):
     postComment = get_postComment_by_id(db, comment_id)
