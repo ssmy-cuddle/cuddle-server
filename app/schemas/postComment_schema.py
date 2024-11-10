@@ -39,7 +39,7 @@ class PaginatedPostCommentResponseItems(BaseModel):
 
 class PaginatedPostCommentResponse(BaseModel):
     items: List[PaginatedPostCommentResponseItems]  # 페이지네이션 결과로 포함된 게시물 리스트
-    has_more: bool  # 다음 페이지 존재 여부
+    has_more: Optional[bool] = None  # 다음 페이지 존재 여부
     next_cursor: Optional[str] = None  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
 
     class Config:

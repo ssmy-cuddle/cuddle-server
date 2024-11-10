@@ -50,4 +50,8 @@ def get_paging_postcomment(
 
     response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
     
-    return response_items_pydantic
+    return PaginatedPostCommentResponse(
+        items=response_items_pydantic, 
+        has_more=None,
+        next_cursor=None
+    )
