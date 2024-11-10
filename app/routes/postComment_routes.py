@@ -36,7 +36,7 @@ def get_paging_postComment_endpoint(
     db: Session = Depends(get_db)
 ):
     
-    result = get_paging_postcomment(post_id=None, viewer_id=viewer_id, omment_id=comment_id, db=db)
+    result = get_paging_postcomment(post_id=None, viewer_id=viewer_id, comment_id=comment_id, db=db)
     return result
 
 @router.delete("/{comment_id}", response_model=dict)
