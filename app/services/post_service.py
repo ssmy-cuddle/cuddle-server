@@ -130,9 +130,10 @@ def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[Pagina
         pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
         pydantic_item.reactions = True
         pydantic_item.user_name = "str"  # 여기서 하드코딩된 값 설정
-        pydantic_item.profile_image = "image"  # 하드코딩된 값 설정
+        pydantic_item.profile_image = None  # 하드코딩된 값 설정
         
         response_items.append(pydantic_item)
+        
     return response_items
 
 # 11.06 게시물 페이지네이션 조회 함수
@@ -159,25 +160,6 @@ def get_paginated_posts2(
     next_cursor = response_items[-1].post_id if has_more and response_items else None
 
     response_items_pydantic = convert_posts_to_pydantic(response_items, viewer_id)
-
-    # # PostResponse로 변환
-    # response_items = [
-    #     PaginatedPostResponseItems(
-    #         post_id=item.post_id,
-    #         uid=item.uid,
-    #         title=item.title,
-    #         content=item.content,
-    #         #immages: Optional[List] = None
-    #         #visibility: Optional[str] = 'public'
-    #         #postLike_cnt : Optional[int] = 0
-    #         #comment_cnt : Optional[int] = 0
-    #         can_modify='Y',
-    #         created_at = item.created_at
-    #     )
-    #     for item in items
-    # ]
-
-    
 
     return PaginatedPostResponse2(
         items=response_items_pydantic , 

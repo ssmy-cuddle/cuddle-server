@@ -39,8 +39,10 @@ class PaginatedPostResponseItems(BaseModel):
     content: Optional[str]
     images: Optional[List] = None
     visibility: Optional[str] = 'public'
+    
     postLike_cnt : Optional[int] = 0
     comment_cnt : Optional[int] = 0
+
     can_modify : Optional[str] = None
     created_at: datetime
     reactions: Optional[bool] = False
