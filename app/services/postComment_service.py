@@ -51,7 +51,7 @@ def delete_postComment_by_id(db: Session, postComment: PostComment):
     db.commit()
 
 def get_paging_postcomment(
-    post_id : str,
+    post_id : Optional[str],
     viewer_id : Optional[str],
     comment_id : Optional[int],
     db: Session
@@ -72,7 +72,6 @@ def get_paging_postcomment(
     else :
 
         query = db.query(PostComment)
-        query = db.query(PostComment).filter(PostComment.post_id == post_id)
         query = db.query(PostComment).filter(PostComment.parent_id == comment_id)
         query = query.order_by(PostComment.created_at.desc())
         items = query.all()
