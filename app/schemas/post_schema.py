@@ -69,3 +69,25 @@ class PaginatedPostResponse2(BaseModel):
     next_cursor: Optional[str] = None  # 다음 페이지를 조회하기 위한 커서 값 (없으면 None)
     class Config:
         from_attributes = True  # ORM 객체에서 속성 매핑
+
+
+class get_journey_response_items(BaseModel):
+    post_id: str
+    uid: str  # 사용자 ID
+    title: Optional[str] = None
+    content: Optional[str] = None
+    images: Optional[List] = None
+    visibility: Optional[str] = 'public'
+    created_at: datetime
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+        from_attributes = True  # ORM 객체에서 속성 매핑 가능하게 설정
+
+class get_journey_response(BaseModel):
+    items: List[get_journey_response_items]  # 페이지네이션 결과로 포함된 게시물 리스트
+
+    class Config:
+        from_attributes = True  # ORM 객체에서 속성 매핑
+
