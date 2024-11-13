@@ -81,8 +81,8 @@ def get_journey_endpoint(
     return result
 
 @router.delete("/{post_id}", response_model=dict)
-def delete_post_endpoint(comment_id: int, db: Session = Depends(get_db)):
-    post = get_post_by_id(db, comment_id)
+def delete_post_endpoint(post_id: str, db: Session = Depends(get_db)):
+    post = get_post_by_id(db, post_id)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
