@@ -196,5 +196,5 @@ def get_journey(
     response_items_pydantic = convert_get_journey_response_to_pydantic(response_items)
 
     return get_journey_response(
-        items = response_items_pyda ntic
+        items = response_items_pydantic
     )
