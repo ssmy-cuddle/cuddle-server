@@ -1,10 +1,11 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
 from models.postLikes import postLikes
-from schemas.post_schema import PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
+from schemas.post_schema import get_journey_response_items, get_journey_response, PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from datetime import datetime
 from pytz import timezone
 from pydantic import parse_obj_as
+from sqlalchemy import func
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -152,8 +153,6 @@ def get_paginated_posts2(
 
     query = query.order_by(Posts.post_id.desc())
 
-    
-
     items = query.limit(limit + 1).all()
     has_more = len(items) > limit
     response_items = items[:limit]
@@ -165,4 +164,37 @@ def get_paginated_posts2(
         items=response_items_pydantic , 
         has_more=has_more,
         next_cursor=next_cursor
+    )
+
+def convert_get_journey_response_to_pydantic(
+    items: List[Posts]
+):
+    response_items = []
+    
+    for item in items:
+        # from_orm을 이용하여 기본 모델 생성
+        pydantic_item = get_journey_response_items.from_orm(item)
+        
+        # 수동으로 각 필드 업데이트
+        pydantic_item.images = [None]  # 하드코딩된 값 설정
+        
+        response_items.append(pydantic_item)
+        
+    return response_items
+
+def get_journey(
+    db: Session, 
+    viewer_id: str,
+    inqr_date: str
+): 
+    query = db.query(Posts)
+    query = db.query(Posts).filter(Posts.uid == viewer_id)
+    query = db.query(Posts).filter(func.to_char(Posts.created_at, 'YYYYMMDD') == inqr_date)
+    response_items = query.order_by(Posts.created_at())
+
+
+    response_items_pydantic = convert_get_journey_response_to_pydantic(response_items)
+
+    return get_journey_response(
+        items = response_items_pydantic
     )
