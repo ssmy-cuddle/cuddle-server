@@ -5,7 +5,7 @@ from schemas.post_schema import get_journey_response_items, get_journey_response
 from datetime import datetime
 from pytz import timezone
 from pydantic import parse_obj_as
-from sqlalchemy import func
+from sqlalchemy import func, asc
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -190,11 +190,11 @@ def get_journey(
     query = db.query(Posts)
     query = db.query(Posts).filter(Posts.uid == viewer_id)
     query = db.query(Posts).filter(func.to_char(Posts.created_at, 'YYYYMMDD') == inqr_date)
-    response_items = query.order_by(Posts.created_at())
+    response_items = query.order_by(asc(Posts.created_at))
 
 
     response_items_pydantic = convert_get_journey_response_to_pydantic(response_items)
 
     return get_journey_response(
-        items = response_items_pydantic
+        items = response_items_pyda ntic
     )
