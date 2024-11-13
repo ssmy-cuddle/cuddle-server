@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
-from schemas.post_schema import PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
+from schemas.post_schema import get_journey_response,PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from services.post_service import get_journey, create_post, get_post_by_id, update_post_by_id, get_paginated_posts, get_paginated_posts2
 from typing import List, Optional #11.02 Optional 추가
 
@@ -66,7 +66,7 @@ def get_posts_endpoint(
     return result
 
 # 전체 조회 페이징
-@router.get("/{viewer_id}/{inqr_date}", response_model=PaginatedPostResponse2)
+@router.get("/{viewer_id}/{inqr_date}", response_model=get_journey_response)
 def get_journey_endpoint(
     viewer_id : str,
     inqr_date : str,
