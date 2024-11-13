@@ -198,3 +198,8 @@ def get_journey(
     return get_journey_response(
         items = response_items_pydantic
     )
+
+
+def delete_post_by_id(db: Session, post: Posts):
+    db.delete(post)
+    db.commit()
