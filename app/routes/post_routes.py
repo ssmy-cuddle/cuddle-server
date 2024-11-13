@@ -67,7 +67,7 @@ def get_posts_endpoint(
 
 # 전체 조회 페이징
 @router.get("/{viewer_id}/{inqr_date}", response_model=PaginatedPostResponse2)
-def get_posts_endpoint(
+def get_journey_endpoint(
     viewer_id : str,
     inqr_date : str,
     db: Session = Depends(get_db)
