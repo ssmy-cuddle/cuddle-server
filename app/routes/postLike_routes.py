@@ -19,5 +19,5 @@ def delete_postLikes_endpoint(post_id: str, uid:str, db: Session = Depends(get_d
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Postlikes not found"
         )
-    delete_postlikes_by_id(db, reaction.id)
+    delete_postlikes_by_id(db, reaction)
     return {"detail": "likes deleted successfully"}
