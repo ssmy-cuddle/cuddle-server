@@ -22,3 +22,11 @@ def create_postLikes(
     db.commit()  # 데이터베이스에 변경 사항 커밋
     db.refresh(db_postLike)  # 저장된 후 객체를 최신 상태로 갱신
     return db_postLike
+
+def get_like_reaction(db: Session, post_id: str, viewer_id: str):
+    query = db.query(PostLike).filter(PostLike.post_id == post_id)
+    return query.filter(PostLike.uid == viewer_id).first()
+
+def delete_postlikes_by_id(db: Session, postlike: PostLike):
+    db.delete(postlike)
+    db.commit()
