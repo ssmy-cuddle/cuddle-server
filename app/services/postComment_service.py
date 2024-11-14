@@ -60,9 +60,9 @@ def delete_postComment_by_id(db: Session, postComment: PostComment):
 
 def get_paging_postcomment(
     db: Session,
-    post_id : Optional[str] = None,
-    viewer_id : Optional[str] = None,
-    comment_id : Optional[int] = None
+    post_id : str,
+    viewer_id : str,
+    comment_id : int
 ):
     # 메인댓글
     if comment_id is None:

@@ -15,6 +15,9 @@ class PostCommentCreate(BaseModel): # 댓글 생성
     uid: str
     parent_id: Optional[int] = 0
 
+class PostCommentGet(BaseModel): # 댓글 생성
+    viewer_id: Optional[str] = None
+
 class PostCommentUpdate(BaseModel):
     message: Optional[str] = None
 
