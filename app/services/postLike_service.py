@@ -9,14 +9,13 @@ from typing import List, Optional
 
 # 댓글생성
 def create_postLikes( 
-    post_id : str,  
-    uid : str,
+    postLike : PostLikeCreate,
     db: Session
 ):
 
     db_postLike = PostLike(
-        post_id=post_id,
-        uid=uid,
+        post_id=postLike.post_id,
+        uid=postLike.uid,
     )
 
     db.add(db_postLike)  # 게시물 추가 준
