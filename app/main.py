@@ -4,7 +4,8 @@ from starlette.middleware.cors import CORSMiddleware
 
 from db.session import engine
 from models import Base
-from routes import auth_routes, user_routes, pet_routes, post_routes, postComment_routes, file_routes
+
+from routes import auth_routes, user_routes, pet_routes, post_routes, postComment_routes, postLike_routes, file_routes
 
 def create_app():
     Base.metadata.create_all(bind=engine)
@@ -28,7 +29,11 @@ def create_app():
     app.include_router(pet_routes.router, prefix="/pets", tags=["Pets"])
     app.include_router(post_routes.router, prefix="/posts", tags=["Posts"])
     app.include_router(postComment_routes.router, prefix="/postComments", tags=["PostComments"])
+
+    app.include_router(postLike_routes.router, prefix="/postLikes", tags=["PostLikes"])
+
     app.include_router(file_routes.router, prefix="/file", tags=["File"])
+
 
     @app.get("/health")
     async def health_check():
