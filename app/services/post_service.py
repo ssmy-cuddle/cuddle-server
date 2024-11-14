@@ -9,7 +9,6 @@ from datetime import datetime
 from pytz import timezone
 from pydantic import parse_obj_as
 from sqlalchemy import func, asc
-import logging
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -138,7 +137,7 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
         user_query = get_user_by_uid(db, item.uid)
         comment_cnt = get_postComment_cnt(db, item.post_id)
         reaction = get_like_reaction(db, item.post_id, item.uid)
-        logging.info(f"Received request for viewer_id: {viewer_id}, item.uid :{item.uid}")
+
         pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
         pydantic_item.reactions = True if reaction else False # 게시글 좋아요 눌렀는지 여부
         pydantic_item.user_name = user_query.user_name  
@@ -170,8 +169,6 @@ def get_paginated_posts2(
     has_more = len(items) > limit
     response_items = items[:limit]
     next_cursor = response_items[-1].post_id if has_more and response_items else None
-
-    logging.info(f"Received request for viewer_id: {viewer_id}")
 
     response_items_pydantic = convert_posts_to_pydantic(db, response_items, viewer_id)
 

@@ -4,7 +4,6 @@ from db.session import get_db
 from schemas.post_schema import get_journey_response,PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from services.post_service import delete_post_by_id, get_journey, create_post, get_post_by_id, update_post_by_id, get_paginated_posts, get_paginated_posts2
 from typing import List, Optional #11.02 Optional 추가
-import logging
 
 router = APIRouter()
 
@@ -58,8 +57,6 @@ def get_posts_endpoint(
     cursor: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    logging.info(f"Received request for viewer_id: {viewer_id} with cursor: {cursor}")
-                 
     limit: int = 10  # 페이지당 게시물 수
     result = get_paginated_posts2(
              db=db, 
