@@ -13,7 +13,7 @@ class PostCommentCreate(BaseModel): # 댓글 생성
     message: str  
     post_id: str
     uid: str
-    parent_id: Optional[int] = None
+    parent_id: Optional[int] = 0
 
 class PostCommentUpdate(BaseModel):
     message: Optional[str] = None
