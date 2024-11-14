@@ -22,7 +22,7 @@ class PostCreate(BaseModel):
 class PostUpdate(BaseModel):
     title: Optional[str] = None  # 선택: 게시글 제목
     content: Optional[str] = None  # 선택: 게시글 본문
-
+    visibility: Optional[str] = None
 
 class PostResponse(PostBase):
     post_id: str  # 게시글 ID
