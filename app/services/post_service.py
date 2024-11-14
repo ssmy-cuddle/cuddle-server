@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
-from models.postLikes import postLikes
+from models.postLikes import PostLike
 from schemas.post_schema import get_journey_response_items, get_journey_response, PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from services.user_service import get_user_by_uid
 from services.postComment_service import get_postComment_cnt
