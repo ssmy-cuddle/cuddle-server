@@ -67,10 +67,11 @@ def get_paging_postcomment(
     # 메인댓글
     if comment_id is None:
         query = db.query(PostComment)
-        query = db.query(PostComment).filter(PostComment.post_id == post_id)
-        query = db.query(PostComment).filter(PostComment.parent_id.is_(None))
-        query = query.order_by(PostComment.created_at.desc())
-        items = query.all()
+        query = query.filter(PostComment.post_id == post_id)  # post_id에 대한 필터 추가
+        query = query.filter(PostComment.parent_id.is_(None))  # parent_id가 NULL인 경우 필터 추가
+        query = query.order_by(PostComment.created_at.desc())  # 생성 시간 역순으로 정렬
+        items = query.all()  # 최종 결과 가져오기
+
 
         response_items_pydantic = convert_posts_to_pydantic(db, items, viewer_id)
     
@@ -82,10 +83,9 @@ def get_paging_postcomment(
     else :
     # 대댓글
         query = db.query(PostComment)
-        query = db.query(PostComment).filter(PostComment.parent_id == comment_id)
-        query = query.order_by(PostComment.created_at.desc())
-        items = query.all()
-
+        query = query.filter(PostComment.parent_id == comment_id)  # comment_id로 필터링
+        query = query.order_by(PostComment.created_at.desc())  # 생성 시간을 기준으로 내림차순 정렬
+        items = query.all()  # 최종 결과 리스트 가져오기
         response_items_pydantic = convert_posts_to_pydantic(db, items, viewer_id)
     
         return PaginatedPostCommentResponse(
