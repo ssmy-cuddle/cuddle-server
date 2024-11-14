@@ -4,6 +4,7 @@ from models.postLikes import PostLike
 from schemas.post_schema import get_journey_response_items, get_journey_response, PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from services.user_service import get_user_by_uid
 from services.postComment_service import get_postComment_cnt
+from services.postLike_service import get_like_reaction
 from datetime import datetime
 from pytz import timezone
 from pydantic import parse_obj_as
@@ -135,9 +136,10 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
         # 수동으로 각 필드 업데이트
         user_query = get_user_by_uid(db, item.uid)
         comment_cnt = get_postComment_cnt(db, item.post_id)
+        reaction = get_like_reaction(db, item.post_id, item.uid)
 
         pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
-        pydantic_item.reactions = True # 게시글 좋아요 눌렀는지 여부
+        pydantic_item.reactions = True if reaction else False # 게시글 좋아요 눌렀는지 여부
         pydantic_item.user_name = user_query.user_name  
         pydantic_item.profile_image = user_query.profile_image 
         pydantic_item.images = [None] #게시글이미지

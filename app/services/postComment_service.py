@@ -11,9 +11,9 @@ from services.post_service import get_user_by_uid
 # 댓글생성
 def create_postComment(
     post_id : str,  
+    parent_id: Optional[int],
     db: Session, 
-    postComment: PostCommentCreate,
-    parent_id: Optional[int] = None
+    postComment: PostCommentCreate
 ):
 
     db_postComment = PostComment(
