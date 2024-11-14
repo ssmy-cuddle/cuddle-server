@@ -32,6 +32,8 @@ class PaginatedPostCommentResponseItems(BaseModel):
     reactions: Optional[bool] = False
     user_name: Optional[str] = None
     profile_image: Optional[str] = None
+       
+    child_comment_cnt : Optional[int] = 0
 
     class Config:
         orm_mode = True

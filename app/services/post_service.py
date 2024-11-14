@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from models.posts import Posts
 from models.postLikes import postLikes
 from schemas.post_schema import get_journey_response_items, get_journey_response, PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
+from services.user_service import get_user_by_uid
+from services.postComment_service import get_postComment_cnt
 from datetime import datetime
 from pytz import timezone
 from pydantic import parse_obj_as
@@ -120,7 +122,7 @@ def get_paginated_posts(
         #is_follow = y
     )
 
-def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
+def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -> List[PaginatedPostResponseItems]:
     response_items = []
     
     for item in items:
@@ -128,10 +130,15 @@ def convert_posts_to_pydantic(items: List[Posts], viewer_id: str) -> List[Pagina
         pydantic_item = PaginatedPostResponseItems.from_orm(item)
         
         # 수동으로 각 필드 업데이트
+        user_query = get_user_by_uid(db, item.uid)
+        comment_cnt = get_postComment_cnt(db, item.post_id)
+
         pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
-        pydantic_item.reactions = True
-        pydantic_item.user_name = "str"  # 여기서 하드코딩된 값 설정
-        pydantic_item.profile_image = None  # 하드코딩된 값 설정
+        pydantic_item.reactions = True # 게시글 좋아요 눌렀는지 여부
+        pydantic_item.user_name = user_query.user_name  
+        pydantic_item.profile_image = user_query.profile_image 
+        pydantic_item.images = [None] #게시글이미지
+        pydantic_item.comment_cnt = comment_cnt #댓글 수
         
         response_items.append(pydantic_item)
         
@@ -158,7 +165,7 @@ def get_paginated_posts2(
     response_items = items[:limit]
     next_cursor = response_items[-1].post_id if has_more and response_items else None
 
-    response_items_pydantic = convert_posts_to_pydantic(response_items, viewer_id)
+    response_items_pydantic = convert_posts_to_pydantic(db, response_items, viewer_id)
 
     return PaginatedPostResponse2(
         items=response_items_pydantic , 
@@ -198,3 +205,8 @@ def get_journey(
     return get_journey_response(
         items = response_items_pydantic
     )
+
+
+def delete_post_by_id(db: Session, post: Posts):
+    db.delete(post)
+    db.commit()

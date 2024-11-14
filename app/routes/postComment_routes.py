@@ -45,7 +45,7 @@ def delete_postComment_endpoint(comment_id: int, db: Session = Depends(get_db)):
     if not postComment:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Pet not found"
+            detail="comment not found"
         )
     delete_postComment_by_id(db, postComment)
     return {"detail": "comment deleted successfully"}

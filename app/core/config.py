@@ -16,6 +16,11 @@ class Config:
         self.ALGORITHM: str = 'HS256'
         self.ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
+        self.aws_access_key_id: str = os.getenv("AWS_ACCESS_KEY_ID")
+        self.aws_secret_access_key: str = os.getenv("AWS_SECRET_ACCESS_KEY")
+        self.aws_region: str = os.getenv("AWS_REGION")
+        self.aws_bucket_name: str = os.getenv("AWS_BUCKET_NAME")
+
 
 class LocalConfig(Config):
     """
