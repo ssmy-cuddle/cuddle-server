@@ -72,7 +72,7 @@ def get_paging_postcomment(
         query = query.order_by(PostComment.created_at.desc())
         items = query.all()
 
-        response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
+        response_items_pydantic = convert_posts_to_pydantic(db, items, viewer_id)
     
         return PaginatedPostCommentResponse(
             items=response_items_pydantic, 
@@ -86,7 +86,7 @@ def get_paging_postcomment(
         query = query.order_by(PostComment.created_at.desc())
         items = query.all()
 
-        response_items_pydantic = convert_posts_to_pydantic(items, viewer_id)
+        response_items_pydantic = convert_posts_to_pydantic(db, items, viewer_id)
     
         return PaginatedPostCommentResponse(
             items=response_items_pydantic, 
