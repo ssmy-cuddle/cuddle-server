@@ -11,10 +11,9 @@ router = APIRouter()
 def create_postComment_endpoint(
     post_id: str, 
     postComment: PostCommentCreate, 
-    db: Session = Depends(get_db),
-    parent_id: Optional[int] = None
+    db: Session = Depends(get_db)
 ):
- 
+    parent_id = postComment.parent_id
     return create_postComment(post_id=post_id, parent_id=parent_id, db=db, postComment=postComment)
 
 # 댓글 페이징 
