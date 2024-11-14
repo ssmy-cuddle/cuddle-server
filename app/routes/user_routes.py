@@ -24,7 +24,7 @@ def get_pets_by_user_id_endpoint(uid: str, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No pets found for this user"
-        )
+        ) 
     return pets
 
 @router.patch("/profile/{uid}", response_model=UserResponse)
