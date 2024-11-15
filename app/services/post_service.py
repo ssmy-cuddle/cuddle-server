@@ -15,6 +15,7 @@ from pytz import timezone
 from pydantic import parse_obj_as
 from sqlalchemy import func, asc
 import logging
+from fastapi import BackgroundTasks
 
 from models.file import File  # 올바른 File 모델 임포트
 from schemas.file_schema import FileCreate
@@ -40,11 +41,11 @@ async def upload_file(db: Session, uid: str, file: UploadFile = FastAPIFile(...)
             raise HTTPException(status_code=400, detail="File must have a valid filename")
 
         # 파일 이름 해시화
-        hashed_filename = generate_hashed_filename(file.filename)
+        hashed_filename = await generate_hashed_filename(file.filename)
         s3_filename = f"uploads/{hashed_filename}"
 
         # S3에 파일 업로드
-        file_url = upload_file_to_s3(file, s3_filename)
+        file_url = await upload_file_to_s3(file, s3_filename)
 
         # 데이터베이스에 파일 정보 저장
         file_record = FileCreate(
@@ -66,8 +67,6 @@ async def upload_file(db: Session, uid: str, file: UploadFile = FastAPIFile(...)
 # 게시물 생성 함수
 def create_post(db: Session, post: PostCreate):
     post_index = get_post_index(db)
-
-    logging.info(f"Received request for image: {post.images}")
 
     if post.images:
         for item in post.images:
