@@ -16,5 +16,6 @@ class Pet(Base):
     neutered = Column(Boolean)  # 중성화 여부
     weight = Column(DECIMAL(5, 2))  # 반려동물 몸무게 (단위: kg)
     description = Column(String)  # 반려동물 설명
+    pet_img_id = Column(Integer)
 
     users = relationship("User", back_populates="pets")  # 반려동물과의 관계 설정
