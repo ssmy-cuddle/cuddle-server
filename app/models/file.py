@@ -8,7 +8,7 @@ class File(Base):
     __tablename__ = "file"
 
     file_id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    file_name = Column(String(255), unique=True, nullable=False)
+    file_name = Column(String(500), unique=True, nullable=False)
     file_url = Column(Text, nullable=False)
     uid = Column(String(50), ForeignKey("users.uid"), nullable=False)
     created_at = Column(TIMESTAMP, default=datetime.utcnow)
