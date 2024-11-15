@@ -17,6 +17,7 @@ class PostCreate(BaseModel):
     title: str  # 필수: 게시글 제목
     content: str  # 필수: 게시글 본문
     visibility: Optional[str] = 'public'  # 선택: 공개 범위
+    images: Optional[list] = None
 
 
 class PostUpdate(BaseModel):
