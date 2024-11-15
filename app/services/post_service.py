@@ -18,6 +18,7 @@ import logging
 
 from models.file import File  # 올바른 File 모델 임포트
 from schemas.file_schema import FileCreate
+from schemas.image_schema import ImageCreate, ImageResponse
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -66,8 +67,11 @@ async def upload_file(db: Session, uid: str, file: UploadFile = FastAPIFile(...)
 def create_post(db: Session, post: PostCreate):
     post_index = get_post_index(db)
 
-    for item in post.images:
-        upload_file(db, item)
+    logging.info(f"Received request for image: {post.images}")
+
+    if post.images:
+        for item in post.images:
+            upload_file(db, post.uid, item)
         
 
     db_post = Posts(
