@@ -4,12 +4,12 @@ from db.session import get_db
 from typing import List 
 from schemas.user_schema import UserResponse, UserProfileUpdate
 from schemas.pet_schema import PetResponse
-from services.user_service import get_user_by_uid, update_user_profile_by_uid, get_pets_by_user_id
+from services.user_service import get_user_by_uid, update_user_profile_by_uid, get_pets_by_user_id, get_user_and_file_info
 router = APIRouter()
 
 @router.get("/{uid}", response_model=UserResponse)
 def get_user_profile(uid: str, db: Session = Depends(get_db)):
-    user = get_user_by_uid(db, uid)
+    user = get_user_and_file_info(db, uid)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -29,7 +29,7 @@ def get_pets_by_user_id_endpoint(uid: str, db: Session = Depends(get_db)):
 
 @router.patch("/profile/{uid}", response_model=UserResponse)
 def update_user_profile(uid: str, profile_update: UserProfileUpdate, db: Session = Depends(get_db)):
-    user = get_user_by_uid(db, uid)
+    user = get_user_and_file_info(db, uid)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

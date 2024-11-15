@@ -16,7 +16,7 @@ class User(Base):
 
     # 2024.10.29.
     profile_intro = Column(String(255), nullable=True)  # 한 줄 소개
-    profile_image = Column(String(255), nullable=True)  # 프로필 이미지 경로
+    profile_image = Column(Integer, nullable=True)  # 프로필 이미지 경로
 
     pets = relationship("Pet", back_populates="users")  # 반려동물과의 관계 설정
     tokens = relationship("Token", back_populates="users")

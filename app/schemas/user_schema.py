@@ -15,17 +15,21 @@ class UserResponse(UserBase):
     updated_at: Optional[datetime]
     status: Optional[int]
     profile_intro: Optional[str] = None
-    profile_image: Optional[str] = None
+    profile_image: Optional[int] = None
+
+    file_name: Optional[str] = None
+    file_url: Optional[str] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class UserProfileUpdate(BaseModel):
+    user_name: Optional[str] = None
     profile_intro: Optional[str] = None
-    profile_image: Optional[str] = None
+    profile_image: Optional[int] = None
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class CheckUserId(BaseModel):
     uid: str
