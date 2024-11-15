@@ -9,8 +9,17 @@ import logging
 router = APIRouter()
 
 @router.post("/", response_model=PostResponse)
-def create_post_endpoint(post: PostCreate, db: Session = Depends(get_db)):
-    return create_post(db=db, post=post)
+async def create_post_endpoint(post: PostCreate, db: Session = Depends(get_db)):
+    try:
+        created_post = await create_post(db=db, post=post)
+        return created_post
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 
 @router.get("/{post_id}", response_model=PostResponse)
 def get_post_endpoint(post_id: str, db: Session = Depends(get_db)):
