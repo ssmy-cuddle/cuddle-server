@@ -35,17 +35,17 @@ def generate_hashed_filename(original_filename: str) -> str:
     hash_object = hashlib.sha256(f"{original_filename}_{random_suffix}".encode())
     return hash_object.hexdigest()
 
-async def upload_file(db: Session, uid: str, file: UploadFile = FastAPIFile(...) ):
+def upload_file(db: Session, uid: str, file: UploadFile = FastAPIFile(...) ):
     try:
         if not file.filename:
             raise HTTPException(status_code=400, detail="File must have a valid filename")
 
         # 파일 이름 해시화
-        hashed_filename = await generate_hashed_filename(file.filename)
+        hashed_filename = generate_hashed_filename(file.filename)
         s3_filename = f"uploads/{hashed_filename}"
 
         # S3에 파일 업로드
-        file_url = await upload_file_to_s3(file, s3_filename)
+        file_url = upload_file_to_s3(file, s3_filename)
 
         # 데이터베이스에 파일 정보 저장
         file_record = FileCreate(
