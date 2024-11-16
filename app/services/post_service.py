@@ -7,7 +7,7 @@ from services.postComment_service import get_postComment_cnt
 from services.postLike_service import get_like_reaction
 from datetime import datetime
 from pytz import timezone
-from services.image_service import create_image
+from services.image_service import create_image, get_images
 from schemas.image_schema import ImageCreate
 from pydantic import parse_obj_as
 from sqlalchemy import func, asc
@@ -199,6 +199,7 @@ def get_paginated_posts2(
     )
 
 def convert_get_journey_response_to_pydantic(
+    db: Session, 
     items: List[Posts]
 ):
     response_items = []
@@ -208,7 +209,8 @@ def convert_get_journey_response_to_pydantic(
         pydantic_item = get_journey_response_items.from_orm(item)
         
         # 수동으로 각 필드 업데이트
-        pydantic_item.images = [None]  # 하드코딩된 값 설정
+        image_items = get_images(db, item.post_id)
+        pydantic_item.images = image_items  # 하드코딩된 값 설정
         
         response_items.append(pydantic_item)
         
@@ -225,7 +227,7 @@ def get_journey(
     response_items = query.order_by(asc(Posts.created_at))
 
 
-    response_items_pydantic = convert_get_journey_response_to_pydantic(response_items)
+    response_items_pydantic = convert_get_journey_response_to_pydantic(db, response_items)
 
     return get_journey_response(
         items = response_items_pydantic
