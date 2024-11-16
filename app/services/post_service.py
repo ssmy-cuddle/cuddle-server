@@ -303,6 +303,7 @@ def get_post_top(db: Session):
         .join(Images, cast(Images.image_id, Text) == cast(Posts.post_id, Text))  # Posts와 Images 조인
         .join(subquery, subquery.c.image_id == cast(Images.image_id, Text))  # 서브쿼리와 Images 조인 (타입 캐스팅)
         .join(File, subquery.c.first_file_id == cast(File.file_id, Text))  # 서브쿼리와 File 조인
+        .order_by(Posts.created_at.desc())
         .limit(10)  # 상위 10개의 게시물만 가져오기
     ).all()
     
