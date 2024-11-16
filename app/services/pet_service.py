@@ -23,6 +23,17 @@ def create_pet(db: Session, pet: PetCreate):
 
 def get_pet_by_id(db: Session, pet_id: int):
     result = (
+        db.query(Pet)
+        .filter(Pet.pet_id == pet_id)
+        .first()
+    )
+
+    if result:
+        return result
+    return None
+
+def get_pet_by_id_with_file(db: Session, pet_id: int):
+    result = (
         db.query(Pet, File.file_name, File.file_url)
         .outerjoin(File, Pet.pet_img_id == File.file_id)
         .filter(Pet.pet_id == pet_id)
@@ -53,28 +64,15 @@ def get_pet_by_id(db: Session, pet_id: int):
     
     return None
 
-def update_pet_by_id(db: Session, pet: Pet, pet_update: PetUpdate):
-    if pet_update.name is not None:
-        pet.name = pet_update.name
-    if pet_update.birthday is not None:
-        pet.birthday = pet_update.birthday
-    if pet_update.breed is not None:
-        pet.breed = pet_update.breed
-    if pet_update.adoption_date is not None:
-        pet.adoption_date = pet_update.adoption_date
-    if pet_update.separation_date is not None:
-        pet.separation_date = pet_update.separation_date
-    if pet_update.gender is not None:
-        pet.gender = pet_update.gender
-    if pet_update.neutered is not None:
-        pet.neutered = pet_update.neutered
-    if pet_update.weight is not None:
-        pet.weight = pet_update.weight
-    if pet_update.description is not None:
-        pet.description = pet_update.description
+def update_pet_by_id(db: Session, pet: Pet, pet_update: PetUpdate, pet_id: str):
+    for key, value in pet_update.dict(exclude_unset=True).items():
+        setattr(pet, key, value)
     
+    print(pet)
+
     db.commit()
     db.refresh(pet)
+
     return pet
 
 def delete_pet_by_id(db: Session, pet: Pet):
