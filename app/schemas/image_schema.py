@@ -9,7 +9,7 @@ class ImageBase(BaseModel):
 class ImageCreate(BaseModel):
     image_id: str
     file_id: str
-    file_url: str = Field(..., description="URL of the file on S3")
+    file_url: Optional[str]
     model: Optional[str]
 
 class ImageResponse(BaseModel):
