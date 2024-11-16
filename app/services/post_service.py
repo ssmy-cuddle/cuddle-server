@@ -68,7 +68,11 @@ def get_post_index(db: Session) -> str:
 
         if not exists:
             return str_index
+        
+# 특정 게시물 조회 함수
+def get_post_by_id2(db: Session, post_id: str):
 
+    return db.query(Posts).filter(Posts.post_id == post_id).first()  # 특정 post_id로 필터링
 
 # 특정 게시물 조회 함수
 def get_post_by_id(db: Session, post_id: str):
