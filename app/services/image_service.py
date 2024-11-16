@@ -17,22 +17,23 @@ def create_image(db: Session, image:ImageCreate):
     return db_image
 
 def get_images(db: Session, image_id: str):
-    image_query = db.query(Images)
-    image_query = image_query.filter(Images.image_id == image_id)
+
+    image_query = db.query(Images).filter(Images.image_id == image_id).all()
     
     response_models = []
 
-    for file_id in image_query:
-        file_query = db.query(File)
-        file_query = file_query.filter(File.file_id == file_id)
+    for image in image_query:
+        # File 테이블에서 file_id로 파일 정보 필터링
+        file_query = db.query(File).filter(File.file_id == image.file_id).first()
 
-        response_model = {
-            "file_id":file_query.file_id,   # file_id로 사용 (필요한 경우)
-            "file_name":file_query.file_name,      # url은 그대로 사용
-            "file_url":file_query.file_url    # model에 image.name 사용
-        }
+        if file_query:
+            response_model = {
+                "file_id":file_query.file_id,   # file_id로 사용 (필요한 경우)
+                "file_name":file_query.file_name,      # url은 그대로 사용
+                "file_url":file_query.file_url    # model에 image.name 사용
+            }
 
-        response_models.append(response_model)
+            response_models.append(response_model)
 
     return response_models
     
