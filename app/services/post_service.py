@@ -7,6 +7,8 @@ from services.postComment_service import get_postComment_cnt
 from services.postLike_service import get_like_reaction
 from datetime import datetime
 from pytz import timezone
+from services.image_service import create_image
+from schemas.image_schema import ImageCreate
 from pydantic import parse_obj_as
 from sqlalchemy import func, asc
 import logging
@@ -21,8 +23,19 @@ def create_post(db: Session, post: PostCreate):
     post_index = get_post_index(db)
 
     if post.images:
-        for item in post.images:
-            logging.info(f"Received request for images_id: {item}")
+        for image in post.images:
+            logging.info(f"Received request for images_id: {image}")
+            # ImageItem을 ImageCreate로 변환
+
+            image_create = ImageCreate(
+                image_id=post_index,  # ImageItem의 id를 image_id로 사용
+                file_id=str(image.id),   # file_id로 사용 (필요한 경우)
+                file_url=image.url,      # url은 그대로 사용
+                model='post'         # model에 image.name 사용
+            )
+
+            create_image(db, image_create)
+
     db_post = Posts(
         post_id=post_index,
         uid=post.uid,
