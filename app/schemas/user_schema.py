@@ -17,11 +17,12 @@ class UserResponse(UserBase):
     profile_intro: Optional[str] = None
     profile_image: Optional[int] = None
 
-    file_name: Optional[str] = None
-    file_url: Optional[str] = None
-
     class Config:
         orm_mode = True
+
+class UserResponseWithFile(UserResponse):
+    file_name: Optional[str] = None
+    file_url: Optional[str] = None
 
 class UserProfileUpdate(BaseModel):
     user_name: Optional[str] = None
