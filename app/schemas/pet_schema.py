@@ -13,7 +13,7 @@ class PetBase(BaseModel):
     neutered: Optional[bool] = None
     weight: Optional[float] = None
     description: Optional[str] = None
-    # pet_img_id: Optional[int] = None
+    pet_img_id: Optional[int] = None
 
 class PetCreate(PetBase):
     pass
@@ -28,7 +28,7 @@ class PetUpdate(BaseModel):
     neutered: Optional[bool] = None
     weight: Optional[float] = None
     description: Optional[str] = None
-    # pet_img_id: Optional[int] = None
+    pet_img_id: Optional[int] = None
 
 class PetResponse(PetBase):
     pet_id: int
