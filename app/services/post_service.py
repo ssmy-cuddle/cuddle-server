@@ -72,7 +72,30 @@ def get_post_index(db: Session) -> str:
 
 # 특정 게시물 조회 함수
 def get_post_by_id(db: Session, post_id: str):
-    return db.query(Posts).filter(Posts.post_id == post_id).first()  # 특정 post_id로 필터링
+
+    post_query = db.query(Posts).filter(Posts.post_id == post_id).first()  # 특정 post_id로 필터링
+
+     # 이미지 정보 조회
+    image_items = get_images(db, post_id)  # post_id에 해당하는 이미지들을 가져옴
+
+    # 게시물 정보를 딕셔너리로 변환
+    post_data = {
+        "post_id": post_query.post_id,
+        "uid": post_query.uid,
+        "title": post_query.title,
+        "content": post_query.content,
+        "visibility": post_query.visibility,
+        "created_at": post_query.created_at,
+        "updated_at": post_query.updated_at,
+        "is_deleted": 0,
+        "post_likes": 0,
+        "post_shares": 0
+    }
+
+    # 이미지 정보 추가
+    post_data["images"] = image_items
+
+    return post_data
 
 # 특정 게시물 수정 함수
 def update_post_by_id(db: Session, post: Posts, post_update: PostUpdate):
