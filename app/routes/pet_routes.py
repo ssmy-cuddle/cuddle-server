@@ -19,7 +19,7 @@ def get_pet_endpoint(pet_id: int, db: Session = Depends(get_db)):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Pet not found"
         )
-    return pet
+    return pet 
 
 @router.patch("/{pet_id}", response_model=PetResponse)
 def update_pet_endpoint(pet_id: int, pet_update: PetUpdate, db: Session = Depends(get_db)):
