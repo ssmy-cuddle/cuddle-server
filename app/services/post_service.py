@@ -153,7 +153,10 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
     for item in items:
         # from_orm을 이용하여 기본 모델 생성
         pydantic_item = PaginatedPostResponseItems.from_orm(item)
-        
+        # 수동으로 각 필드 업데이트
+        image_items = get_images(db, item.post_id)
+        pydantic_item.images = image_items  # 하드코딩된 값 설정
+
         # 수동으로 각 필드 업데이트
         user_query = get_user_by_uid(db, item.uid)
         comment_cnt = get_postComment_cnt(db, item.post_id)
@@ -163,7 +166,6 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
         pydantic_item.reactions = True if reaction else False # 게시글 좋아요 눌렀는지 여부
         pydantic_item.user_name = user_query.user_name  
         pydantic_item.profile_image = user_query.profile_image 
-        pydantic_item.images = [None] #게시글이미지
         pydantic_item.comment_cnt = comment_cnt #댓글 수
         
         response_items.append(pydantic_item)
