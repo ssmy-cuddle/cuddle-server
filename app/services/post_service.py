@@ -14,7 +14,10 @@ from pydantic import parse_obj_as
 from sqlalchemy import func, asc
 from models.images import Images
 import logging
+from models.user import User
+from models.file import File
 from sqlalchemy import func, cast, Integer, Text
+
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -154,6 +157,7 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
         # from_orm을 이용하여 기본 모델 생성
         pydantic_item = PaginatedPostResponseItems.from_orm(item)
         # 수동으로 각 필드 업데이트
+        
         image_items = get_images(db, item.post_id)
         pydantic_item.images = image_items  # 하드코딩된 값 설정
 
@@ -162,12 +166,28 @@ def convert_posts_to_pydantic(db: Session, items: List[Posts], viewer_id: str) -
         comment_cnt = get_postComment_cnt(db, item.post_id)
         reaction = get_like_reaction(db, item.post_id, item.uid)
         logging.info(f"Received request for viewer_id: {viewer_id}, item.uid :{item.uid}")
+        
         pydantic_item.can_modify = "y" if (item.uid == viewer_id) else "n"
         pydantic_item.reactions = True if reaction else False # 게시글 좋아요 눌렀는지 여부
         pydantic_item.user_name = user_query.user_name  
-        pydantic_item.profile_image = user_query.profile_image 
-        pydantic_item.comment_cnt = comment_cnt #댓글 수
         
+        pydantic_item.comment_cnt = comment_cnt #댓글 수
+
+        #프로필사진
+        result = (
+            db.query(User, File.file_name, File.file_url)
+            .outerjoin(File, User.profile_image == File.file_id)
+            .filter(User.uid == item.uid)
+            .first()
+        )
+
+        if result:
+            user, file_name, file_url = result
+
+            pydantic_item.profile_image = file_url
+            # pydantic_item.file_name = file_name
+            # pydantic_item.file_url = file_url
+
         response_items.append(pydantic_item)
         
     return response_items
