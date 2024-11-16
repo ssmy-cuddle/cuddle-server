@@ -30,8 +30,8 @@ def create_post(db: Session, post: PostCreate):
 
             image_create = ImageCreate(
                 image_id=post_index,  # ImageItem의 id를 image_id로 사용
-                file_id=str(image.id),   # file_id로 사용 (필요한 경우)
-                file_url=image.url,      # url은 그대로 사용
+                file_id=image,   # file_id로 사용 (필요한 경우)
+                file_url=0,      # url은 그대로 사용
                 model='post'         # model에 image.name 사용
             )
 
