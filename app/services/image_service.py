@@ -7,7 +7,7 @@ def create_image(db: Session, image:ImageCreate):
         image_id=image.image_id,
         file_id=image.file_id,
         file_url=image.file_url,
-        model=image.filmodele_id
+        model=image.model
     )
 
     db.add(db_image)

@@ -12,12 +12,17 @@ class PostBase(BaseModel):
     post_likes: Optional[int] = 0
     post_shares: Optional[int] = 0
 
+class ImageItem(BaseModel):
+    id: int
+    name: str
+    url: str
+
 class PostCreate(BaseModel):
     uid: str  # 필수: 작성자의 사용자 ID
     title: str  # 필수: 게시글 제목
     content: str  # 필수: 게시글 본문
     visibility: Optional[str] = 'public'  # 선택: 공개 범위
-    images: Optional[list] = None
+    images: Optional[List[ImageItem]] = None
 
 
 class PostUpdate(BaseModel):
