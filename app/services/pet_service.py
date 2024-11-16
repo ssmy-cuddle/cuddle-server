@@ -14,7 +14,8 @@ def create_pet(db: Session, pet: PetCreate):
         gender=pet.gender,
         neutered=pet.neutered,
         weight=pet.weight,
-        description=pet.description
+        description=pet.description,
+        pet_img_id=pet.pet_img_id
     )
     db.add(db_pet)
     db.commit()
