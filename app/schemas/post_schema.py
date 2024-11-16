@@ -34,6 +34,7 @@ class PostResponse(PostBase):
     post_id: str  # 게시글 ID
     created_at: datetime  # 생성 시간
     last_updated: datetime  # 마지막 업데이트 시간
+    images: Optional[List] = None
 
     class Config:
         from_attributes = True  # ORM 객체에서 속성 매핑
