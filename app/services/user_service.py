@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from models.user import User
 from models.pets import Pet
 from models.file import File
-from schemas.user_schema import UserCreate, UserProfileUpdate, UserResponse
+from schemas.user_schema import UserCreate, UserProfileUpdate, UserResponse, UserResponseWithFile
 from utils.hashing import Hash
 from utils.nickname import getNickname
 
@@ -27,6 +27,8 @@ def get_user_and_file_info(db: Session, uid: str):
         .first()
     )
 
+    print(result)
+
     if result:
         user, file_name, file_url = result
         # User와 File 정보를 통합한 딕셔너리 생성
@@ -43,7 +45,7 @@ def get_user_and_file_info(db: Session, uid: str):
             "file_url": file_url
         }
         # UserResponse 모델로 반환
-        return UserResponse(**user_dict)
+        return UserResponseWithFile(**user_dict)
     
     return None
 
