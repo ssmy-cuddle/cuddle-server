@@ -20,6 +20,7 @@ from typing import List, Optional #11.02 Optional 추가
 
 # 게시물 생성 함수
 def create_post(db: Session, post: PostCreate):
+    logging.info(f"Received request data: {post}")
     post_index = get_post_index(db)
 
     if post.images:
