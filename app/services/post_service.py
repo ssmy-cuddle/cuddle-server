@@ -86,7 +86,7 @@ def get_post_by_id(db: Session, post_id: str):
         "content": post_query.content,
         "visibility": post_query.visibility,
         "created_at": post_query.created_at,
-        "updated_at": post_query.updated_at,
+        "last_updated": post_query.last_updated,
         "is_deleted": 0,
         "post_likes": 0,
         "post_shares": 0
