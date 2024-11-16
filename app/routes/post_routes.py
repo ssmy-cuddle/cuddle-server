@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from db.session import get_db
 from schemas.post_schema import get_journey_response,PostCreate, PostUpdate, PostResponse, PaginatedPostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
-from services.post_service import delete_post_by_id, get_journey, create_post, get_post_by_id, update_post_by_id, get_paginated_posts, get_paginated_posts2
+from services.post_service import get_post_by_id2, delete_post_by_id, get_journey, create_post, get_post_by_id, update_post_by_id, get_paginated_posts, get_paginated_posts2
 from typing import List, Optional #11.02 Optional 추가
 import logging
 
@@ -24,7 +24,7 @@ def get_post_endpoint(post_id: str, db: Session = Depends(get_db)):
 
 @router.patch("/{post_id}", response_model=PostResponse)
 def update_post_endpoint(post_id: str, post_update: PostUpdate, db: Session = Depends(get_db)):
-    post = get_post_by_id(db, post_id)
+    post = get_post_by_id2(db, post_id)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -85,7 +85,7 @@ def get_journey_endpoint(
 
 @router.delete("/{post_id}", response_model=dict)
 def delete_post_endpoint(post_id: str, db: Session = Depends(get_db)):
-    post = get_post_by_id(db, post_id)
+    post = get_post_by_id2(db, post_id)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
