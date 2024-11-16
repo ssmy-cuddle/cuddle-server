@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from models.posts import Posts
 from models.postLikes import PostLike
+from models.file import File
 from schemas.post_schema import get_journey_response_items, get_journey_response, PostCreate, PostUpdate, PaginatedPostResponse, PostResponse, PaginatedPostResponseItems, PaginatedPostResponse2
 from services.user_service import get_user_by_uid
 from services.postComment_service import get_postComment_cnt
@@ -11,7 +12,9 @@ from services.image_service import create_image, get_images
 from schemas.image_schema import ImageCreate
 from pydantic import parse_obj_as
 from sqlalchemy import func, asc
+from models.images import Images
 import logging
+from sqlalchemy import func, cast, Integer, Text
 
 # 11.02 Paginator
 from utils.paginator import Paginator  # Paginator 임포트
@@ -237,3 +240,27 @@ def get_journey(
 def delete_post_by_id(db: Session, post: Posts):
     db.delete(post)
     db.commit()
+
+def get_post_top(db: Session):
+    subquery = (
+        db.query(
+            cast(Images.image_id, Text).label("image_id"),
+            func.min(cast(Images.file_id, Text)).label("first_file_id")  # file_id를 Text로 캐스팅
+        )
+        .group_by(Images.image_id)
+        .subquery()
+    )
+
+    # 조인 쿼리 작성 (select_from을 사용하여 명시적으로 조인 순서 지정)
+    result = (
+        db.query(Posts, File.file_name, File.file_url)
+        .select_from(Posts)  # 조인을 시작할 기준 테이블을 명시적으로 설정
+        .join(Images, cast(Images.image_id, Text) == cast(Posts.post_id, Text))  # Posts와 Images 조인
+        .join(subquery, subquery.c.image_id == cast(Images.image_id, Text))  # 서브쿼리와 Images 조인 (타입 캐스팅)
+        .join(File, subquery.c.first_file_id == cast(File.file_id, Text))  # 서브쿼리와 File 조인
+        .limit(10)  # 상위 10개의 게시물만 가져오기
+    ).all()
+    
+    if result:
+        return result
+    return None
