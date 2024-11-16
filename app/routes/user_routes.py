@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from db.session import get_db
 from typing import List 
 from schemas.user_schema import UserResponse, UserProfileUpdate, UserResponseWithFile
-from schemas.pet_schema import PetResponse
+from schemas.pet_schema import PetResponse, PetResponseWithFile
 from services.user_service import get_user_by_uid, update_user_profile_by_uid, get_pets_by_user_id, get_user_and_file_info
 router = APIRouter()
 
@@ -17,7 +17,7 @@ def get_user_profile(uid: str, db: Session = Depends(get_db)):
         )
     return user
 
-@router.get("/{uid}/pets", response_model=List[PetResponse])
+@router.get("/{uid}/pets", response_model=List[PetResponseWithFile])
 def get_pets_by_user_id_endpoint(uid: str, db: Session = Depends(get_db)):
     pets = get_pets_by_user_id(db, uid)
     if not pets:

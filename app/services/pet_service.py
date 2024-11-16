@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from models.pets import Pet
 from models.file import File
-from schemas.pet_schema import PetCreate, PetUpdate, PetResponse
+from schemas.pet_schema import PetCreate, PetUpdate, PetResponse, PetResponseWithFile
 
 def create_pet(db: Session, pet: PetCreate):
     db_pet = Pet(
@@ -60,7 +60,7 @@ def get_pet_by_id_with_file(db: Session, pet_id: int):
             "file_url": file_url
         }
         # UserResponse 모델로 반환
-        return PetResponse(**pet_dict)
+        return PetResponseWithFile(**pet_dict)
     
     return None
 

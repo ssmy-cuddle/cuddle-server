@@ -3,6 +3,7 @@ from models.user import User
 from models.pets import Pet
 from models.file import File
 from schemas.user_schema import UserCreate, UserProfileUpdate, UserResponse, UserResponseWithFile
+from schemas.pet_schema import PetResponse, PetResponseWithFile
 from utils.hashing import Hash
 from utils.nickname import getNickname
 
@@ -76,4 +77,36 @@ def update_user_profile_by_uid(db: Session, user: User, profile_update: UserProf
     return user
 
 def get_pets_by_user_id(db: Session, uid: str):
-    return db.query(Pet).filter(Pet.uid == uid).all()
+    results = (
+        db.query(Pet, File.file_name, File.file_url)
+        .outerjoin(File, Pet.pet_img_id == File.file_id)
+        .filter(Pet.uid == uid)
+        .all()
+    )
+
+    pet_list = []
+
+    if len(results) != 0:
+        for result in results:
+            pet, file_name, file_url = result
+            # User와 File 정보를 통합한 딕셔너리 생성
+            pet_dict = {
+                "pet_id": pet.pet_id,
+                "uid": pet.uid,
+                "name": pet.name,
+                "birthday": pet.birthday,
+                "breed": pet.breed,
+                "adoption_date": pet.adoption_date,
+                "separation_date": pet.separation_date,
+                "gender": pet.gender,
+                "neutered": pet.neutered,
+                "weight": pet.weight,
+                "description": pet.description,
+                "pet_img_id": pet.pet_img_id,
+                "file_name": file_name,
+                "file_url": file_url
+            }
+            # UserResponse 모델로 반환
+            pet_list.append(PetResponseWithFile(**pet_dict))
+        return pet_list
+    return None
