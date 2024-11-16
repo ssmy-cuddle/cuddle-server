@@ -54,6 +54,8 @@ class PaginatedPostResponseItems(BaseModel):
     reactions: Optional[bool] = False
     user_name: Optional[str] = None
     profile_image: Optional[str] = None
+    file_name: Optional[str] = None
+    file_url : Optional[str] = None
 
     class Config:
         orm_mode = True
