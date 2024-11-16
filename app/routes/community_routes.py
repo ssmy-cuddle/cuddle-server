@@ -22,12 +22,14 @@ def read_top_posts(db: Session = Depends(get_db)):
         CommunityResponse(
             post_id=post.post_id,
             uid=post.uid,
+            user_name=user_name,
+            profile_image_url=profile_image_url,
             title=post.title,
             content=post.content,
             file_name=file_name,
             file_url=file_url
         )
-        for post, file_name, file_url in posts
+        for post, user_name, profile_image_url, file_name, file_url in posts
     ]
 
     return response

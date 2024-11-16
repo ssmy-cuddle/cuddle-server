@@ -296,12 +296,21 @@ def get_post_top(db: Session):
         .subquery()
     )
 
+    subquery2 = (
+        db.query(
+            User.uid, User.user_name, File.file_url.label("profile_image_url")
+        )
+        .outerjoin(File, User.profile_image == File.file_id)
+        .subquery()
+    )
+
     # 조인 쿼리 작성 (select_from을 사용하여 명시적으로 조인 순서 지정)
     result = (
-        db.query(Posts, File.file_name, File.file_url)
+        db.query(Posts, subquery2.c.user_name, subquery2.c.profile_image_url, File.file_name, File.file_url)
         .select_from(Posts)  # 조인을 시작할 기준 테이블을 명시적으로 설정
         .join(Images, cast(Images.image_id, Text) == cast(Posts.post_id, Text))  # Posts와 Images 조인
         .join(subquery, subquery.c.image_id == cast(Images.image_id, Text))  # 서브쿼리와 Images 조인 (타입 캐스팅)
+        .join(subquery2, subquery2.c.uid == Posts.uid)
         .join(File, subquery.c.first_file_id == cast(File.file_id, Text))  # 서브쿼리와 File 조인
         .order_by(Posts.created_at.desc())
         .limit(10)  # 상위 10개의 게시물만 가져오기
