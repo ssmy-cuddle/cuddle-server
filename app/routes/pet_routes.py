@@ -15,7 +15,7 @@ def create_pet_endpoint(pet: PetCreate, db: Session = Depends(get_db)):
 def get_pet_endpoint(pet_id: int, db: Session = Depends(get_db)):
     pet = get_pet_by_id_with_file(db, pet_id)
     if not pet:
-        raise HTTPException(
+        raise HTTPException( 
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Pet not found"
         )
